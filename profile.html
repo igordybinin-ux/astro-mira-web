@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Настройка Астро-Профиля</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --input-bg: rgba(0, 0, 0, 0.3);
+            --text-color: #ffffff;
+            --accent-color: #a3b1ff;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            /* Космический фон */
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* Добавляем звезды на фон */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            margin-top: 0;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, #a3b1ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(163, 177, 255, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 13px;
+            color: #d1d1d1;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 600;
+            padding-left: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background-color: var(--input-bg);
+            color: white;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent-color);
+            background-color: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(163, 177, 255, 0.2);
+        }
+
+        /* Стили для чекбокса */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+        }
+
+        input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            accent-color: #764ba2;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        #main-btn {
+            background: var(--primary-gradient);
+            color: white;
+            font-size: 16px;
+            font-weight: 800;
+            padding: 16px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-top: 25px;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #main-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(118, 75, 162, 0.3);
+        }
+
+        /* Анимация появления */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Скрываем нативные иконки календаря в темной теме (для эстетики) */
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.6;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🌠 Профиль</h2>
+
+        <div class="form-group">
+            <label>👤 Как к тебе обращаться?</label>
+            <input type="text" id="name" placeholder="Твое имя">
+        </div>
+
+        <div class="form-group">
+            <label>📅 Дата рождения</label>
+            <input type="date" id="date">
+        </div>
+
+        <div class="form-group">
+            <label>⏰ Время рождения (важно для домов)</label>
+            <input type="time" id="time" value="12:00">
+        </div>
+
+        <div class="form-group">
+            <label>🏙 Город рождения</label>
+            <input type="text" id="city" placeholder="Например: Москва">
+        </div>
+
+        <div class="checkbox-wrapper">
+            <input type="checkbox" id="notify" checked>
+            <label for="notify" style="margin:0; cursor:pointer;">🔔 Получать ежедневный гороскоп</label>
+        </div>
+
+        <button id="main-btn" onclick="sendData()">Сохранить ✨</button>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); 
+
+        // Настраиваем цвета темы Телеграма под наш дизайн
+        tg.setHeaderColor('#1b2735'); 
+        tg.setBackgroundColor('#1b2735');
+
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                name: params.get('name'),
+                birth_date: params.get('birth_date'),
+                birth_time: params.get('birth_time'),
+                city: params.get('city')
+            };
+        }
+
+        window.onload = function() {
+            const data = getQueryParams();
+            
+            if (data.name) {
+                document.getElementById('name').value = data.name;
+                document.getElementById('main-btn').innerText = "🔄 Обновить Космо-Данные"; 
+            }
+            if (data.birth_date) document.getElementById('date').value = data.birth_date;
+            if (data.birth_time) document.getElementById('time').value = data.birth_time;
+            if (data.city) document.getElementById('city').value = data.city;
+        };
+
+        function sendData() {
+            let name = document.getElementById("name").value.trim();
+            let date = document.getElementById("date").value;
+            let time = document.getElementById("time").value;
+            let city = document.getElementById("city").value.trim();
+            let notify = document.getElementById("notify").checked;
+
+            if (!name || !date || !city) {
+                tg.showAlert("🪐 Пожалуйста, заполни Имя, Дату и Город, чтобы звезды сошлись!");
+                return;
+            }
+
+            // Визуальный эффект нажатия
+            let btn = document.getElementById("main-btn");
+            btn.innerText = "Отправляю в космос... 🚀";
+            btn.style.opacity = "0.7";
+
+            let data = {
+                type: "astro_profile_update",
+                name: name,
+                birth_date: date,
+                birth_time: time,
+                city: city,
+                daily_notify: notify
+            };
+
+            tg.sendData(JSON.stringify(data));
+            // Небольшая задержка для красоты
+            setTimeout(function() { tg.close(); }, 300); 
+        }
+    </script>
+</body>
+</html>

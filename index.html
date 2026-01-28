@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tarot Mira</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #1a0b2e 0%, #000000 100%);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h2 { margin-bottom: 20px; font-weight: 300; text-transform: uppercase; letter-spacing: 2px; text-align: center; font-size: 18px;}
+
+        /* Сцена для 3D */
+        .scene {
+            perspective: 1000px;
+            width: 200px;
+            height: 340px;
+            position: relative;
+        }
+
+        /* Карта */
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* Стороны карты */
+        .card__face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Рубашка (Задняя сторона) */
+        .card__face--front {
+            background: linear-gradient(135deg, #2e004f 0%, #000000 100%);
+            border: 2px solid #ffd700;
+        }
+        
+        /* Узор на рубашке */
+        .pattern {
+            width: 80%;
+            height: 90%;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pattern span { font-size: 40px; opacity: 0.8; }
+
+        /* Лицо (Передняя сторона) */
+        .card__face--back {
+            background: white;
+            color: #1a0b2e;
+            transform: rotateY(180deg);
+            border: 4px solid #ffd700;
+        }
+
+        .card-img { font-size: 60px; margin-bottom: 10px; }
+        .card-name { font-weight: bold; font-size: 18px; text-transform: uppercase; margin-bottom: 5px; }
+        .card-desc { font-size: 12px; color: #555; }
+
+        .btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: #ffd700;
+            color: #000;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.5s;
+            cursor: pointer;
+        }
+        .btn.visible { opacity: 1; }
+
+    </style>
+</head>
+<body>
+
+    <h2 id="status">Выбери карту дня</h2>
+
+    <div class="scene">
+        <div class="card" onclick="flipCard()">
+            <div class="card__face card__face--front">
+                <div class="pattern"><span>👁️</span></div>
+            </div>
+            <div class="card__face card__face--back">
+                <div class="card-img" id="c_img">?</div>
+                <div class="card-name" id="c_name">...</div>
+                <div class="card-desc" id="c_desc">...</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn" id="sendBtn" onclick="sendResult()">Получить толкование</button>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Раскрыть на весь экран
+
+        // База данных карт (Старшие арканы для примера)
+        const tarotDeck = [
+            {name: "Шут", icon: "🤡", id: "fool", desc: "Новое начало, риск"},
+            {name: "Маг", icon: "🧙‍♂️", id: "magician", desc: "Сила воли, мастерство"},
+            {name: "Жрица", icon: "🌙", id: "priestess", desc: "Интуиция, тайны"},
+            {name: "Императрица", icon: "👸", id: "empress", desc: "Плодородие, красота"},
+            {name: "Император", icon: "👑", id: "emperor", desc: "Власть, структура"},
+            {name: "Влюбленные", icon: "💞", id: "lovers", desc: "Выбор, гармония"},
+            {name: "Колесница", icon: "🐎", id: "chariot", desc: "Победа, движение"},
+            {name: "Сила", icon: "🦁", id: "strength", desc: "Смелость, терпение"},
+            {name: "Отшельник", icon: "🕯️", id: "hermit", desc: "Поиск истины, покой"},
+            {name: "Колесо Фортуны", icon: "🎡", id: "fortune", desc: "Перемены, удача"},
+            {name: "Справедливость", icon: "⚖️", id: "justice", desc: "Честность, закон"},
+            {name: "Смерть", icon: "💀", id: "death", desc: "Трансформация, конец"},
+            {name: "Дьявол", icon: "😈", id: "devil", desc: "Искушение, зависимость"},
+            {name: "Башня", icon: "⚡", id: "tower", desc: "Разрушение, катарсис"},
+            {name: "Звезда", icon: "✨", id: "star", desc: "Надежда, вдохновение"},
+            {name: "Луна", icon: "🌚", id: "moon", desc: "Иллюзии, страхи"},
+            {name: "Солнце", icon: "☀️", id: "sun", desc: "Радость, успех"},
+            {name: "Мир", icon: "🌍", id: "world", desc: "Завершение, гармония"}
+        ];
+
+        let hasFlipped = false;
+        let chosenCard = null;
+
+        function flipCard() {
+            if (hasFlipped) return; // Нельзя перевернуть дважды
+            
+            // 1. Выбираем случайную карту
+            chosenCard = tarotDeck[Math.floor(Math.random() * tarotDeck.length)];
+            
+            // 2. Вставляем данные в HTML
+            document.getElementById('c_img').innerText = chosenCard.icon;
+            document.getElementById('c_name').innerText = chosenCard.name;
+            document.getElementById('c_desc').innerText = chosenCard.desc;
+
+            // 3. Запускаем анимацию
+            const card = document.querySelector('.card');
+            card.classList.add('is-flipped');
+            
+            document.getElementById('status').innerText = "Судьба определена!";
+            
+            // 4. Показываем кнопку отправки через 1 сек
+            setTimeout(() => {
+                document.getElementById('sendBtn').classList.add('visible');
+            }, 800);
+            
+            hasFlipped = true;
+        }
+
+        function sendResult() {
+            if (!chosenCard) return;
+            
+            // Отправляем данные обратно в бота (JSON)
+            const data = JSON.stringify({
+                type: "tarot_result",
+                card_name: chosenCard.name,
+                card_id: chosenCard.id
+            });
+            
+            tg.sendData(data);
+        }
+    </script>
+</body>
+</html>

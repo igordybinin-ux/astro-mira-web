@@ -69,12 +69,12 @@
             align-items: center;
             width: 100%;
             height: 100%;
-            padding-top: 20px;
+            padding-top: 10px; /* Чуть меньше отступ сверху */
         }
 
         h2 { 
             font-family: 'Cinzel', serif;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             font-weight: 400; 
             color: #ffd700;
             text-transform: uppercase; 
@@ -82,7 +82,7 @@
             text-align: center; 
             font-size: 16px;
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-            height: 30px;
+            height: 25px;
         }
 
         /* Контейнер для карт */
@@ -91,13 +91,13 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            height: 460px; /* Чуть больше места */
+            height: 480px; /* Чуть больше места */
             transition: all 0.3s;
         }
 
-        /* 🔥 СТИЛИ ДЛЯ 5 КАРТ (2 РЯДА) */
-        .cards-container.mode-five {
-            flex-wrap: wrap; /* Разрешаем перенос */
+        /* 🔥 СТИЛИ ДЛЯ 5 и 10 КАРТ (Многострочность) */
+        .cards-container.mode-five, .cards-container.mode-ten {
+            flex-wrap: wrap; 
             align-content: center;
         }
 
@@ -109,9 +109,7 @@
             margin: 0 4px;
             perspective: 1000px;
         }
-        /* Отступы для режима 5 карт */
-        .mode-five .card-wrapper { margin: 5px 8px; }
-
+        
         /* Сама карта */
         .card {
             position: relative;
@@ -122,15 +120,30 @@
             border-radius: 8px;
         }
 
-        /* Размеры */
+        /* --- РАЗМЕРЫ КАРТ ДЛЯ РАЗНЫХ РЕЖИМОВ --- */
+        
+        /* 1 карта (стандарт) */
         .mode-single .card { width: 240px; height: 360px; }
+        
+        /* 3 карты */
         .mode-triple .card { width: 100px; height: 155px; }
-        /* 5 карт - поменьше */
-        .mode-five .card { width: 85px; height: 130px; }
 
+        /* 5 карт (2 ряда) */
+        .mode-five .card { width: 85px; height: 130px; }
+        .mode-five .card-wrapper { margin: 5px 8px; }
+
+        /* 🔥 10 КАРТ (4 ряда, маленькие) */
+        .mode-ten .card { width: 60px; height: 90px; border-radius: 4px; }
+        .mode-ten .card-wrapper { margin: 3px 5px; }
+        /* Чуть уменьшим шрифт подписи для 10 карт */
+        .mode-ten .card-label { font-size: 8px; margin-top: 2px; max-width: 60px; overflow: hidden; white-space: nowrap; }
+
+
+        /* Адаптив для узких экранов */
         @media (max-width: 340px) { 
             .mode-triple .card { width: 85px; height: 130px; } 
             .mode-five .card { width: 70px; height: 110px; }
+            .mode-ten .card { width: 50px; height: 75px; }
         }
 
         .card.is-flipped { transform: rotateY(180deg); }
@@ -140,12 +153,15 @@
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: 8px;
+            border-radius: 8px; /* Скругление */
             overflow: hidden;
             border: 2px solid #c5a059;
             box-sizing: border-box;
             background: #000;
         }
+        /* Для 10 карт уменьшаем радиус и толщину рамки */
+        .mode-ten .card__face { border-radius: 4px; border-width: 1px; }
+
         .card__face--front { transform: rotateY(0deg); }
         .card__face--back { transform: rotateY(180deg); }
         
@@ -153,16 +169,16 @@
 
         /* Подписи СНАРУЖИ карты */
         .card-label {
-            margin-top: 10px;
+            margin-top: 8px;
             text-align: center;
             font-size: 10px;
             color: #aaa;
             text-transform: uppercase;
             font-family: 'Montserrat', sans-serif;
             letter-spacing: 1px;
-            height: 15px;
+            height: 12px;
         }
-        .mode-five .card-label { margin-top: 5px; font-size: 9px; }
+        .mode-five .card-label { margin-top: 4px; font-size: 9px; }
 
         /* Инфо блок */
         .info-block {
@@ -170,24 +186,24 @@
             text-align: center;
             opacity: 0;
             transition: opacity 0.5s;
-            height: 60px;
+            height: 40px; /* Чуть уменьшил высоту */
         }
         .info-block.visible { opacity: 1; }
-        .card-name-text { font-family: 'Cinzel', serif; color: #ffd700; font-size: 18px; margin-bottom: 5px; }
-        .card-desc-text { font-size: 12px; color: #ccc; max-width: 300px; margin: 0 auto; }
+        .card-name-text { font-family: 'Cinzel', serif; color: #ffd700; font-size: 16px; margin-bottom: 2px; }
+        .card-desc-text { font-size: 11px; color: #ccc; max-width: 300px; margin: 0 auto; line-height: 1.2; }
 
         /* Кнопка */
         .action-btn {
             margin-top: auto;
-            margin-bottom: 30px;
-            padding: 15px 40px;
+            margin-bottom: 20px;
+            padding: 12px 40px;
             background: linear-gradient(45deg, #c5a059, #ffd700);
             color: #000;
             border: none;
             border-radius: 4px;
             font-family: 'Cinzel', serif;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.5s;
@@ -215,6 +231,10 @@
         <button class="menu-btn" onclick="startGame('five')">
             Полный Разбор
             <span>5 карт: Скрытое и Итоги</span>
+        </button>
+        <button class="menu-btn" onclick="startGame('ten')" style="border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.2);">
+            Кельтский Крест (PRO)
+            <span>Полный расклад (10 карт)</span>
         </button>
     </div>
 
@@ -295,6 +315,7 @@
             if (currentMode === 'single') container.classList.add('mode-single');
             else if (currentMode === 'triple') container.classList.add('mode-triple');
             else if (currentMode === 'five') container.classList.add('mode-five');
+            else if (currentMode === 'ten') container.classList.add('mode-ten'); // 🔥 Добавил класс 10 карт
 
             let count = 1;
             let labels = [];
@@ -307,6 +328,9 @@
             } else if (currentMode === 'five') {
                 count = 5;
                 labels = ["Прошлое", "Настоящее", "Будущее", "Скрытое", "Итог"];
+            } else if (currentMode === 'ten') { // 🔥 Логика для 10 карт
+                count = 10;
+                labels = ["Текущее", "Проблема", "Прошлое", "Будущее", "Сознание", "Подсознание", "Совет", "Внешнее", "Страхи", "Итог"];
             }
 
             for (let i = 0; i < count; i++) {
@@ -331,7 +355,7 @@
 
                 wrapper.appendChild(cardEl);
 
-                // Подписи для режимов 3 и 5 карт
+                // Подписи для режимов 3, 5 и 10 карт
                 if (currentMode !== 'single') {
                     const labelEl = document.createElement('div');
                     labelEl.className = 'card-label';
@@ -356,7 +380,7 @@
                 document.getElementById('info-desc').innerText = data.desc;
                 document.getElementById('info-block').classList.add('visible');
             } else {
-                // Для 3 и 5 карт показываем счетчик
+                // Для 3, 5 и 10 карт показываем счетчик
                 const total = selectedCards.length;
                 document.getElementById('status-text').innerText = `Открыто ${flippedCount} из ${total}`;
                 if (flippedCount === total) {
@@ -398,6 +422,9 @@
                     } else if (currentMode === 'five') {
                         posLabels = ["Прошлое", "Настоящее", "Будущее", "Скрытое", "Итог"];
                         type = "tarot_spread_5";
+                    } else if (currentMode === 'ten') { // 🔥 Лейблы для 10 карт
+                        posLabels = ["Текущее", "Проблема", "Прошлое", "Будущее", "Сознание", "Подсознание", "Совет", "Внешнее", "Страхи", "Итог"];
+                        type = "tarot_spread_10";
                     }
 
                     dataToSend = {

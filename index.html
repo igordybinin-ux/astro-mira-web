@@ -18,6 +18,7 @@
             align-items: center;
             height: 100vh;
             overflow: hidden;
+            -webkit-tap-highlight-color: transparent; /* Убирает синий квадрат при клике */
         }
 
         /* --- МЕНЮ --- */
@@ -30,7 +31,7 @@
             width: 100%;
             position: absolute;
             z-index: 10;
-            background: rgba(0,0,0,0.8);
+            background: #111; /* Непрозрачный фон, чтобы скрыть загрузку */
             transition: opacity 0.5s;
         }
         
@@ -61,7 +62,7 @@
 
         /* --- ИГРОВОЕ ПОЛЕ --- */
         #game-screen {
-            display: none; /* Скрыто по умолчанию */
+            display: none;
             flex-direction: column;
             align-items: center;
             width: 100%;
@@ -79,21 +80,28 @@
             text-align: center; 
             font-size: 16px;
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-            height: 40px; /* Фиксированная высота для заголовка */
+            height: 30px;
         }
 
-        /* Сцена для карт */
+        /* Контейнер для карт */
         .cards-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: nowrap;
             width: 100%;
-            height: 420px;
-            perspective: 1000px;
+            height: 450px; /* Чуть больше места */
         }
 
-        /* Стиль карты (базовый) */
+        /* Обертка для карты и подписи (чтобы подпись не крутилась) */
+        .card-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 4px;
+            perspective: 1000px; /* Перспектива тут */
+        }
+
+        /* Сама карта */
         .card {
             position: relative;
             transform-style: preserve-3d;
@@ -101,16 +109,12 @@
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
             border-radius: 8px;
-            margin: 0 5px; /* Отступ между картами */
         }
 
-        /* Размеры для ОДНОЙ карты */
+        /* Размеры */
         .mode-single .card { width: 240px; height: 360px; }
-        
-        /* Размеры для ТРЕХ карт (поменьше) */
-        .mode-triple .card { width: 105px; height: 160px; margin: 2px; }
-        /* Если экран совсем узкий, уменьшаем */
-        @media (max-width: 340px) { .mode-triple .card { width: 90px; height: 135px; } }
+        .mode-triple .card { width: 100px; height: 155px; }
+        @media (max-width: 340px) { .mode-triple .card { width: 85px; height: 130px; } }
 
         .card.is-flipped { transform: rotateY(180deg); }
 
@@ -123,25 +127,28 @@
             overflow: hidden;
             border: 2px solid #c5a059;
             box-sizing: border-box;
+            background: #000; /* Черный фон, чтобы не было дырок при загрузке */
         }
-        .card__face--front { background: #000; }
-        .card__face--back { background: #000; transform: rotateY(180deg); }
+        .card__face--front { transform: rotateY(0deg); }
+        .card__face--back { transform: rotateY(180deg); }
+        
         .card-img-content { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Подписи под картами (для режима 3 карт) */
+        /* Подписи ТЕПЕРЬ СНАРУЖИ карты */
         .card-label {
-            position: absolute;
-            bottom: -25px;
-            width: 100%;
+            margin-top: 15px;
             text-align: center;
             font-size: 10px;
             color: #aaa;
             text-transform: uppercase;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 1px;
+            height: 15px; /* Фикс высоты */
         }
 
-        /* Инфо блок (только для 1 карты) */
+        /* Инфо блок */
         .info-block {
-            margin-top: 10px;
+            margin-top: 5px;
             text-align: center;
             opacity: 0;
             transition: opacity 0.5s;
@@ -164,12 +171,14 @@
             font-weight: 700;
             font-size: 14px;
             opacity: 0;
-            pointer-events: none;
+            pointer-events: none; /* Нельзя нажать пока не видно */
             transition: opacity 0.5s;
             text-transform: uppercase;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            cursor: pointer;
         }
         .action-btn.visible { opacity: 1; pointer-events: all; }
+        .action-btn:active { transform: scale(0.95); opacity: 0.8; }
 
     </style>
 </head>
@@ -177,12 +186,10 @@
 
     <div id="menu-screen">
         <div class="menu-title">Выберите расклад</div>
-        
         <button class="menu-btn" onclick="startGame('single')">
             Карта Дня
             <span>Один совет на сегодня</span>
         </button>
-        
         <button class="menu-btn" onclick="startGame('triple')">
             Три Судьбы
             <span>Прошлое / Настоящее / Будущее</span>
@@ -192,8 +199,7 @@
     <div id="game-screen">
         <h2 id="status-text">Коснитесь карты</h2>
 
-        <div class="cards-container" id="cards-container">
-            </div>
+        <div class="cards-container" id="cards-container"></div>
 
         <div class="info-block" id="info-block">
             <div class="card-name-text" id="info-name"></div>
@@ -207,7 +213,7 @@
         const tg = window.Telegram.WebApp;
         tg.expand(); 
 
-        // Данные карт
+        // База карт
         const tarotDeck = [
             {name: "Шут", id: "fool", desc: "Начало, свобода, риск"},
             {name: "Маг", id: "magician", desc: "Воля, мастерство, действие"},
@@ -234,8 +240,20 @@
         ];
 
         let currentMode = 'single';
-        let selectedCards = []; // Массив выбранных карт
+        let selectedCards = []; 
         let flippedCount = 0;
+
+        // 🔥 ПРЕДЗАГРУЗКА КАРТИНОК (Чтобы не тупило)
+        function preloadImages() {
+            // Грузим рубашку
+            new Image().src = "cards/back.jpg";
+            // Грузим все лица карт
+            tarotDeck.forEach(card => {
+                new Image().src = `cards/${card.id}.jpg`;
+            });
+        }
+        // Запускаем предзагрузку сразу
+        preloadImages();
 
         function startGame(mode) {
             currentMode = mode;
@@ -253,31 +271,33 @@
             flippedCount = 0;
             selectedCards = [];
 
-            // Перемешиваем колоду, чтобы брать уникальные карты
+            // Перемешиваем и выбираем
             const shuffled = [...tarotDeck].sort(() => 0.5 - Math.random());
-
-            // Настройка классов контейнера
-            container.className = 'cards-container';
-            if (currentMode === 'single') container.classList.add('mode-single');
-            else container.classList.add('mode-triple');
+            
+            // Определяем классы
+            if (currentMode === 'single') {
+                container.classList.add('mode-single');
+                container.classList.remove('mode-triple');
+            } else {
+                container.classList.add('mode-triple');
+                container.classList.remove('mode-single');
+            }
 
             const count = (currentMode === 'single') ? 1 : 3;
             const labels = ["Прошлое", "Настоящее", "Будущее"];
 
             for (let i = 0; i < count; i++) {
                 const cardData = shuffled[i];
-                selectedCards.push(cardData); // Запоминаем карту сразу
+                selectedCards.push(cardData);
 
-                // Создаем HTML карты
+                // Создаем обертку (Wrapper)
+                const wrapper = document.createElement('div');
+                wrapper.className = 'card-wrapper';
+
+                // Создаем карту
                 const cardEl = document.createElement('div');
                 cardEl.className = 'card';
-                cardEl.onclick = () => flipCardElement(cardEl, cardData, i);
-
-                // Подпись для 3-х карт
-                let labelHtml = '';
-                if (currentMode === 'triple') {
-                    labelHtml = `<div class="card-label">${labels[i]}</div>`;
-                }
+                cardEl.onclick = () => flipCardLogic(cardEl, cardData, i);
 
                 cardEl.innerHTML = `
                     <div class="card__face card__face--front">
@@ -286,31 +306,40 @@
                     <div class="card__face card__face--back">
                         <img src="cards/${cardData.id}.jpg" class="card-img-content">
                     </div>
-                    ${labelHtml}
                 `;
-                container.appendChild(cardEl);
+
+                wrapper.appendChild(cardEl);
+
+                // Подпись (ВНЕ карты, чтобы не крутилась)
+                if (currentMode === 'triple') {
+                    const labelEl = document.createElement('div');
+                    labelEl.className = 'card-label';
+                    labelEl.innerText = labels[i];
+                    wrapper.appendChild(labelEl);
+                }
+
+                container.appendChild(wrapper);
             }
         }
 
-        function flipCardElement(element, data, index) {
+        function flipCardLogic(element, data, index) {
             if (element.classList.contains('is-flipped')) return;
 
             element.classList.add('is-flipped');
             flippedCount++;
 
-            // Обновляем заголовок
+            // Логика текста сверху
             if (currentMode === 'triple') {
                 const statuses = ["Открыто Прошлое...", "Открыто Настоящее...", "Судьба ясна"];
                 document.getElementById('status-text').innerText = statuses[Math.min(flippedCount - 1, 2)];
             } else {
                 document.getElementById('status-text').innerText = "Судьба открыта";
-                // Показываем инфо только для одной карты
                 document.getElementById('info-name').innerText = data.name;
                 document.getElementById('info-desc').innerText = data.desc;
                 document.getElementById('info-block').classList.add('visible');
             }
 
-            // Если открыты все карты
+            // Показываем кнопку, если всё открыто
             const targetCount = (currentMode === 'single') ? 1 : 3;
             if (flippedCount === targetCount) {
                 setTimeout(() => {
@@ -320,25 +349,42 @@
         }
 
         function sendResult() {
+            // Визуальный эффект нажатия
+            const btn = document.getElementById('sendBtn');
+            btn.innerText = "Отправка...";
+            btn.style.opacity = "0.7";
+
             let dataToSend = {};
 
-            if (currentMode === 'single') {
-                dataToSend = {
-                    type: "tarot_result", // Старый тип для 1 карты
-                    card_name: selectedCards[0].name,
-                    card_id: selectedCards[0].id
-                };
-            } else {
-                dataToSend = {
-                    type: "tarot_spread_3", // 🔥 Новый тип для 3 карт
-                    cards: selectedCards.map((c, i) => ({
-                        name: c.name,
-                        id: c.id,
-                        position: ["Прошлое (Причина)", "Настоящее (Ситуация)", "Будущее (Итог)"][i]
-                    }))
-                };
+            try {
+                if (currentMode === 'single') {
+                    dataToSend = {
+                        type: "tarot_result",
+                        card_name: selectedCards[0].name,
+                        card_id: selectedCards[0].id
+                    };
+                } else {
+                    dataToSend = {
+                        type: "tarot_spread_3",
+                        cards: selectedCards.map((c, i) => ({
+                            name: c.name,
+                            id: c.id,
+                            position: ["Прошлое", "Настоящее", "Будущее"][i]
+                        }))
+                    };
+                }
+                
+                // Отправляем данные боту
+                tg.sendData(JSON.stringify(dataToSend));
+                
+                // На всякий случай закрываем окно принудительно (если sendData не сработает мгновенно)
+                setTimeout(() => { tg.close(); }, 300);
+
+            } catch (e) {
+                alert("Ошибка отправки: " + e.message);
+                btn.innerText = "Попробовать снова";
+                btn.style.opacity = "1";
             }
-            tg.sendData(JSON.stringify(dataToSend));
         }
     </script>
 </body>

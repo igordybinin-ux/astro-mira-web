@@ -16,149 +16,205 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             height: 100vh;
             overflow: hidden;
         }
 
+        /* --- МЕНЮ --- */
+        #menu-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            z-index: 10;
+            background: rgba(0,0,0,0.8);
+            transition: opacity 0.5s;
+        }
+        
+        .menu-title {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            color: #ffd700;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .menu-btn {
+            background: linear-gradient(45deg, #1c1c24, #2a2a35);
+            border: 1px solid #c5a059;
+            color: #fff;
+            padding: 20px 30px;
+            margin: 10px;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            width: 80%;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+        }
+        .menu-btn:active { transform: scale(0.95); background: #c5a059; color: #000; }
+        .menu-btn span { display: block; font-size: 12px; font-family: 'Montserrat', sans-serif; color: #aaa; margin-top: 5px; text-transform: none; }
+
+        /* --- ИГРОВОЕ ПОЛЕ --- */
+        #game-screen {
+            display: none; /* Скрыто по умолчанию */
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding-top: 20px;
+        }
+
         h2 { 
             font-family: 'Cinzel', serif;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             font-weight: 400; 
             color: #ffd700;
             text-transform: uppercase; 
-            letter-spacing: 3px; 
+            letter-spacing: 2px; 
             text-align: center; 
-            font-size: 14px;
+            font-size: 16px;
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-            position: absolute;
-            top: 30px;
-            width: 100%;
+            height: 40px; /* Фиксированная высота для заголовка */
         }
 
-        .scene {
+        /* Сцена для карт */
+        .cards-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: nowrap;
+            width: 100%;
+            height: 420px;
             perspective: 1000px;
-            width: 260px; 
-            height: 390px;
-            position: relative;
-            margin-top: 40px;
         }
 
+        /* Стиль карты (базовый) */
         .card {
-            width: 100%;
-            height: 100%;
             position: relative;
             transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            margin: 0 5px; /* Отступ между картами */
         }
 
-        .card.is-flipped {
-            transform: rotateY(180deg);
-        }
+        /* Размеры для ОДНОЙ карты */
+        .mode-single .card { width: 240px; height: 360px; }
+        
+        /* Размеры для ТРЕХ карт (поменьше) */
+        .mode-triple .card { width: 105px; height: 160px; margin: 2px; }
+        /* Если экран совсем узкий, уменьшаем */
+        @media (max-width: 340px) { .mode-triple .card { width: 90px; height: 135px; } }
+
+        .card.is-flipped { transform: rotateY(180deg); }
 
         .card__face {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            border-radius: 12px;
+            border-radius: 8px;
             overflow: hidden;
-            border: 2px solid #c5a059; /* Тонкая золотая рамка */
+            border: 2px solid #c5a059;
             box-sizing: border-box;
         }
-
-        .card-img-content {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
         .card__face--front { background: #000; }
         .card__face--back { background: #000; transform: rotateY(180deg); }
-        
-        .card-info {
-            margin-top: 25px;
+        .card-img-content { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Подписи под картами (для режима 3 карт) */
+        .card-label {
+            position: absolute;
+            bottom: -25px;
+            width: 100%;
+            text-align: center;
+            font-size: 10px;
+            color: #aaa;
+            text-transform: uppercase;
+        }
+
+        /* Инфо блок (только для 1 карты) */
+        .info-block {
+            margin-top: 10px;
             text-align: center;
             opacity: 0;
-            transition: opacity 0.5s ease-in;
+            transition: opacity 0.5s;
+            height: 60px;
         }
-        .card-info.visible { opacity: 1; }
+        .info-block.visible { opacity: 1; }
+        .card-name-text { font-family: 'Cinzel', serif; color: #ffd700; font-size: 18px; margin-bottom: 5px; }
+        .card-desc-text { font-size: 12px; color: #ccc; max-width: 300px; margin: 0 auto; }
 
-        .card-name { 
-            font-family: 'Cinzel', serif;
-            font-weight: 700; 
-            font-size: 20px; 
-            color: #ffd700;
-            text-transform: uppercase; 
-            margin-bottom: 8px; 
-            letter-spacing: 1px;
-        }
-        .card-desc { 
-            font-family: 'Montserrat', sans-serif;
-            font-size: 12px; 
-            color: #aaa; 
-            max-width: 260px;
-        }
-
-        .btn {
-            margin-top: 30px;
-            padding: 16px 40px;
+        /* Кнопка */
+        .action-btn {
+            margin-top: auto;
+            margin-bottom: 30px;
+            padding: 15px 40px;
             background: linear-gradient(45deg, #c5a059, #ffd700);
             color: #000;
             border: none;
-            border-radius: 2px;
+            border-radius: 4px;
             font-family: 'Cinzel', serif;
             font-weight: 700;
             font-size: 14px;
-            letter-spacing: 1px;
             opacity: 0;
-            transition: opacity 0.5s, transform 0.2s;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            pointer-events: none;
+            transition: opacity 0.5s;
             text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
-        .btn.visible { opacity: 1; }
-        .btn:active { transform: scale(0.95); }
+        .action-btn.visible { opacity: 1; pointer-events: all; }
+
     </style>
 </head>
 <body>
 
-    <h2 id="status">Коснитесь карты</h2>
+    <div id="menu-screen">
+        <div class="menu-title">Выберите расклад</div>
+        
+        <button class="menu-btn" onclick="startGame('single')">
+            Карта Дня
+            <span>Один совет на сегодня</span>
+        </button>
+        
+        <button class="menu-btn" onclick="startGame('triple')">
+            Три Судьбы
+            <span>Прошлое / Настоящее / Будущее</span>
+        </button>
+    </div>
 
-    <div class="scene">
-        <div class="card" onclick="flipCard()">
-            <div class="card__face card__face--front">
-                <img src="cards/back.jpg" class="card-img-content" alt="Back">
+    <div id="game-screen">
+        <h2 id="status-text">Коснитесь карты</h2>
+
+        <div class="cards-container" id="cards-container">
             </div>
-            <div class="card__face card__face--back">
-                <img id="chosen-card-img" src="" class="card-img-content" alt="Tarot Card">
-            </div>
+
+        <div class="info-block" id="info-block">
+            <div class="card-name-text" id="info-name"></div>
+            <div class="card-desc-text" id="info-desc"></div>
         </div>
-    </div>
 
-    <div class="card-info" id="cardInfoBlock">
-        <div class="card-name" id="c_name"></div>
-        <div class="card-desc" id="c_desc"></div>
+        <button class="action-btn" id="sendBtn" onclick="sendResult()">Принять Судьбу</button>
     </div>
-
-    <button class="btn" id="sendBtn" onclick="sendResult()">Принять Судьбу</button>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand(); 
 
-        // Полный список карт (JPG)
+        // Данные карт
         const tarotDeck = [
             {name: "Шут", id: "fool", desc: "Начало, свобода, риск"},
             {name: "Маг", id: "magician", desc: "Воля, мастерство, действие"},
             {name: "Жрица", id: "priestess", desc: "Интуиция, тайны, мудрость"},
             {name: "Императрица", id: "empress", desc: "Плодородие, творчество, природа"},
             {name: "Император", id: "emperor", desc: "Власть, структура, защита"},
-            {name: "Иерофант", id: "hierophant", desc: "Традиция, духовный учитель, вера"},
+            {name: "Иерофант", id: "hierophant", desc: "Традиция, вера, обучение"},
             {name: "Влюбленные", id: "lovers", desc: "Любовь, выбор, гармония"},
             {name: "Колесница", id: "chariot", desc: "Победа, движение, контроль"},
             {name: "Сила", id: "strength", desc: "Сила духа, терпение, смелость"},
@@ -177,48 +233,112 @@
             {name: "Мир", id: "world", desc: "Завершение, целостность, триумф"}
         ];
 
-        let hasFlipped = false;
-        let chosenCard = null;
+        let currentMode = 'single';
+        let selectedCards = []; // Массив выбранных карт
+        let flippedCount = 0;
 
-        function flipCard() {
-            if (hasFlipped) return;
-            
-            chosenCard = tarotDeck[Math.floor(Math.random() * tarotDeck.length)];
-            
-            // Ищем картинку JPG
-            const imgPath = `cards/${chosenCard.id}.jpg`;
-            
-            // Предзагрузка, чтобы не моргало
-            const imgObj = new Image();
-            imgObj.src = imgPath;
-            imgObj.onload = () => {
-                document.getElementById('chosen-card-img').src = imgPath;
-                
-                document.getElementById('c_name').innerText = chosenCard.name;
-                document.getElementById('c_desc').innerText = chosenCard.desc;
+        function startGame(mode) {
+            currentMode = mode;
+            document.getElementById('menu-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('menu-screen').style.display = 'none';
+                document.getElementById('game-screen').style.display = 'flex';
+                initBoard();
+            }, 500);
+        }
 
-                const card = document.querySelector('.card');
-                card.classList.add('is-flipped');
-                
-                document.getElementById('status').innerText = "Судьба открыта";
-                
+        function initBoard() {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '';
+            flippedCount = 0;
+            selectedCards = [];
+
+            // Перемешиваем колоду, чтобы брать уникальные карты
+            const shuffled = [...tarotDeck].sort(() => 0.5 - Math.random());
+
+            // Настройка классов контейнера
+            container.className = 'cards-container';
+            if (currentMode === 'single') container.classList.add('mode-single');
+            else container.classList.add('mode-triple');
+
+            const count = (currentMode === 'single') ? 1 : 3;
+            const labels = ["Прошлое", "Настоящее", "Будущее"];
+
+            for (let i = 0; i < count; i++) {
+                const cardData = shuffled[i];
+                selectedCards.push(cardData); // Запоминаем карту сразу
+
+                // Создаем HTML карты
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card';
+                cardEl.onclick = () => flipCardElement(cardEl, cardData, i);
+
+                // Подпись для 3-х карт
+                let labelHtml = '';
+                if (currentMode === 'triple') {
+                    labelHtml = `<div class="card-label">${labels[i]}</div>`;
+                }
+
+                cardEl.innerHTML = `
+                    <div class="card__face card__face--front">
+                        <img src="cards/back.jpg" class="card-img-content">
+                    </div>
+                    <div class="card__face card__face--back">
+                        <img src="cards/${cardData.id}.jpg" class="card-img-content">
+                    </div>
+                    ${labelHtml}
+                `;
+                container.appendChild(cardEl);
+            }
+        }
+
+        function flipCardElement(element, data, index) {
+            if (element.classList.contains('is-flipped')) return;
+
+            element.classList.add('is-flipped');
+            flippedCount++;
+
+            // Обновляем заголовок
+            if (currentMode === 'triple') {
+                const statuses = ["Открыто Прошлое...", "Открыто Настоящее...", "Судьба ясна"];
+                document.getElementById('status-text').innerText = statuses[Math.min(flippedCount - 1, 2)];
+            } else {
+                document.getElementById('status-text').innerText = "Судьба открыта";
+                // Показываем инфо только для одной карты
+                document.getElementById('info-name').innerText = data.name;
+                document.getElementById('info-desc').innerText = data.desc;
+                document.getElementById('info-block').classList.add('visible');
+            }
+
+            // Если открыты все карты
+            const targetCount = (currentMode === 'single') ? 1 : 3;
+            if (flippedCount === targetCount) {
                 setTimeout(() => {
-                     document.getElementById('cardInfoBlock').classList.add('visible');
                     document.getElementById('sendBtn').classList.add('visible');
-                }, 800);
-            };
-            
-            hasFlipped = true;
+                }, 600);
+            }
         }
 
         function sendResult() {
-            if (!chosenCard) return;
-            const data = JSON.stringify({
-                type: "tarot_result",
-                card_name: chosenCard.name,
-                card_id: chosenCard.id
-            });
-            tg.sendData(data);
+            let dataToSend = {};
+
+            if (currentMode === 'single') {
+                dataToSend = {
+                    type: "tarot_result", // Старый тип для 1 карты
+                    card_name: selectedCards[0].name,
+                    card_id: selectedCards[0].id
+                };
+            } else {
+                dataToSend = {
+                    type: "tarot_spread_3", // 🔥 Новый тип для 3 карт
+                    cards: selectedCards.map((c, i) => ({
+                        name: c.name,
+                        id: c.id,
+                        position: ["Прошлое (Причина)", "Настоящее (Ситуация)", "Будущее (Итог)"][i]
+                    }))
+                };
+            }
+            tg.sendData(JSON.stringify(dataToSend));
         }
     </script>
 </body>

@@ -23,25 +23,27 @@
 
         h2 { 
             font-family: 'Cinzel', serif;
-            margin-bottom: 30px; 
+            margin-bottom: 20px;
             font-weight: 400; 
             color: #ffd700;
             text-transform: uppercase; 
-            letter-spacing: 4px; 
+            letter-spacing: 3px; 
             text-align: center; 
-            font-size: 16px;
+            font-size: 14px;
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            position: absolute;
+            top: 30px;
+            width: 100%;
         }
 
-        /* Сцена для 3D */
         .scene {
             perspective: 1000px;
-            width: 240px; /* Чуть шире */
-            height: 400px; /* Чуть выше */
+            width: 260px; 
+            height: 390px;
             position: relative;
+            margin-top: 40px;
         }
 
-        /* Карта */
         .card {
             width: 100%;
             height: 100%;
@@ -49,120 +51,61 @@
             transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
         }
 
         .card.is-flipped {
             transform: rotateY(180deg);
         }
 
-        /* Стороны карты */
         .card__face {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
             border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            box-sizing: border-box;
             overflow: hidden;
+            border: 2px solid #c5a059; /* Тонкая золотая рамка */
+            box-sizing: border-box;
         }
 
-        /* --- РУБАШКА (ЗАДНЯЯ СТОРОНА) --- */
-        .card__face--front {
-            background: #0f0518;
-            border: 2px solid #5a4a2d;
-        }
-        
-        /* Узор рубашки (CSS Pattern) */
-        .pattern {
-            width: 90%;
-            height: 94%;
-            border: 1px solid #7a6a4d;
-            background-image: 
-                linear-gradient(30deg, #1a0b2e 12%, transparent 12.5%, transparent 87%, #1a0b2e 87.5%, #1a0b2e),
-                linear-gradient(150deg, #1a0b2e 12%, transparent 12.5%, transparent 87%, #1a0b2e 87.5%, #1a0b2e),
-                linear-gradient(30deg, #1a0b2e 12%, transparent 12.5%, transparent 87%, #1a0b2e 87.5%, #1a0b2e),
-                linear-gradient(150deg, #1a0b2e 12%, transparent 12.5%, transparent 87%, #1a0b2e 87.5%, #1a0b2e),
-                radial-gradient(circle at center, #ffd700 1%, transparent 2%);
-            background-size: 20px 35px;
-            background-position: 0 0, 0 0, 10px 18px, 10px 18px, 0 0;
-            opacity: 0.3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* Знак в центре рубашки */
-        .logo-symbol {
-            width: 60px;
-            height: 60px;
-            border: 1px solid #ffd700;
-            transform: rotate(45deg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-        }
-        .logo-inner {
-            width: 40px;
-            height: 40px;
-            border: 1px solid #ffd700;
-        }
-
-        /* --- ЛИЦО (ПЕРЕДНЯЯ СТОРОНА) --- */
-        .card__face--back {
-            background: #111;
-            transform: rotateY(180deg);
-            border: 4px solid #c5a059;
-            padding: 20px;
-        }
-
-        /* Имитация картинки карты (Пока заглушка) */
-        .card-image-placeholder {
-            width: 100%;
-            height: 60%;
-            background: linear-gradient(to bottom, #1a0b2e, #000);
-            border: 1px solid #333;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            color: #ffd700;
-            position: relative;
-        }
-        
-        /* Если будет реальная картинка */
-        .real-img {
+        .card-img-content {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: none; /* Пока скрыто */
+            display: block;
         }
+
+        .card__face--front { background: #000; }
+        .card__face--back { background: #000; transform: rotateY(180deg); }
+        
+        .card-info {
+            margin-top: 25px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+        .card-info.visible { opacity: 1; }
 
         .card-name { 
             font-family: 'Cinzel', serif;
             font-weight: 700; 
-            font-size: 18px; 
+            font-size: 20px; 
             color: #ffd700;
             text-transform: uppercase; 
-            margin-bottom: 5px; 
+            margin-bottom: 8px; 
             letter-spacing: 1px;
         }
         .card-desc { 
             font-family: 'Montserrat', sans-serif;
-            font-size: 11px; 
+            font-size: 12px; 
             color: #aaa; 
-            line-height: 1.4;
+            max-width: 260px;
         }
 
         .btn {
-            margin-top: 40px;
+            margin-top: 30px;
             padding: 16px 40px;
             background: linear-gradient(45deg, #c5a059, #ffd700);
             color: #000;
@@ -180,7 +123,6 @@
         }
         .btn.visible { opacity: 1; }
         .btn:active { transform: scale(0.95); }
-
     </style>
 </head>
 <body>
@@ -190,21 +132,17 @@
     <div class="scene">
         <div class="card" onclick="flipCard()">
             <div class="card__face card__face--front">
-                <div class="pattern">
-                    <div class="logo-symbol">
-                        <div class="logo-inner"></div>
-                    </div>
-                </div>
+                <img src="cards/back.jpg" class="card-img-content" alt="Back">
             </div>
             <div class="card__face card__face--back">
-                <div class="card-image-placeholder" id="img_container">
-                    <span id="c_icon">✨</span>
-                    </div>
-                
-                <div class="card-name" id="c_name">...</div>
-                <div class="card-desc" id="c_desc">...</div>
+                <img id="chosen-card-img" src="" class="card-img-content" alt="Tarot Card">
             </div>
         </div>
+    </div>
+
+    <div class="card-info" id="cardInfoBlock">
+        <div class="card-name" id="c_name"></div>
+        <div class="card-desc" id="c_desc"></div>
     </div>
 
     <button class="btn" id="sendBtn" onclick="sendResult()">Принять Судьбу</button>
@@ -213,32 +151,75 @@
         const tg = window.Telegram.WebApp;
         tg.expand(); 
 
-        // Данные карт
+        // Полный список карт (JPG)
         const tarotDeck = [
-            {name: "Шут", icon: "🃏", id: "fool", desc: "Начало пути, свобода, риск, невинность"},
-            {name: "Маг", icon: "🔮", id: "magician", desc: "Воля, мастерство, действие, концентрация"},
-            {name: "Жрица", icon: "🌙", id: "priestess", desc: "Интуиция, тайны, подсознание, мудрость"},
-            {name: "Императрица", icon: "👑", id: "empress", desc: "Изобилие, природа, творчество, мать"},
-            {name: "Император", icon: "🛡️", id: "emperor", desc: "Власть, структура, защита, отец"},
-            {name: "Влюбленные", icon: "❤️", id: "lovers", desc: "Любовь, выбор, гармония, союз"},
-            {name: "Колесница", icon: "⚔️", id: "chariot", desc: "Движение, победа, контроль, сила воли"},
-            {name: "Сила", icon: "🦁", id: "strength", desc: "Внутренняя сила, смелость, сострадание"},
-            {name: "Отшельник", icon: "🔦", id: "hermit", desc: "Поиск истины, одиночество, мудрость"},
-            {name: "Колесо Фортуны", icon: "🎡", id: "fortune", desc: "Судьба, перемены, циклы жизни"},
-            {name: "Справедливость", icon: "⚖️", id: "justice", desc: "Правда, закон, причина и следствие"},
-            {name: "Повешенный", icon: "🙃", id: "hanged", desc: "Жертва, новый взгляд, пауза"},
-            {name: "Смерть", icon: "💀", id: "death", desc: "Трансформация, конец старого, переход"},
-            {name: "Умеренность", icon: "🏺", id: "temperance", desc: "Баланс, терпение, исцеление"},
-            {name: "Дьявол", icon: "🔥", id: "devil", desc: "Зависимость, материя, теневая сторона"},
-            {name: "Башня", icon: "⚡", id: "tower", desc: "Разрушение, крах иллюзий, освобождение"},
-            {name: "Звезда", icon: "✨", id: "star", desc: "Надежда, вдохновение, духовность"},
-            {name: "Луна", icon: "🌚", id: "moon", desc: "Иллюзии, страхи, сны, интуиция"},
-            {name: "Солнце", icon: "☀️", id: "sun", desc: "Радость, успех, витальность, ясность"},
-            {name: "Суд", icon: "📯", id: "judgement", desc: "Возрождение, призыв, прощение"},
-            {name: "Мир", icon: "🌍", id: "world", desc: "Завершение, целостность, путешествие"}
+            {name: "Шут", id: "fool", desc: "Начало, свобода, риск"},
+            {name: "Маг", id: "magician", desc: "Воля, мастерство, действие"},
+            {name: "Жрица", id: "priestess", desc: "Интуиция, тайны, мудрость"},
+            {name: "Императрица", id: "empress", desc: "Плодородие, творчество, природа"},
+            {name: "Император", id: "emperor", desc: "Власть, структура, защита"},
+            {name: "Иерофант", id: "hierophant", desc: "Традиция, духовный учитель, вера"},
+            {name: "Влюбленные", id: "lovers", desc: "Любовь, выбор, гармония"},
+            {name: "Колесница", id: "chariot", desc: "Победа, движение, контроль"},
+            {name: "Сила", id: "strength", desc: "Сила духа, терпение, смелость"},
+            {name: "Отшельник", id: "hermit", desc: "Поиск истины, уединение"},
+            {name: "Колесо Фортуны", id: "fortune", desc: "Судьба, удача, перемены"},
+            {name: "Справедливость", id: "justice", desc: "Правда, закон, ответственность"},
+            {name: "Повешенный", id: "hanged", desc: "Жертва, новый взгляд, пауза"},
+            {name: "Смерть", id: "death", desc: "Трансформация, конец старого"},
+            {name: "Умеренность", id: "temperance", desc: "Баланс, гармония, исцеление"},
+            {name: "Дьявол", id: "devil", desc: "Искушение, зависимость, тень"},
+            {name: "Башня", id: "tower", desc: "Разрушение, внезапные перемены"},
+            {name: "Звезда", id: "star", desc: "Надежда, вдохновение, вера"},
+            {name: "Луна", id: "moon", desc: "Иллюзии, интуиция, сны"},
+            {name: "Солнце", id: "sun", desc: "Радость, успех, ясность"},
+            {name: "Суд", id: "judgement", desc: "Возрождение, призыв, прощение"},
+            {name: "Мир", id: "world", desc: "Завершение, целостность, триумф"}
         ];
 
         let hasFlipped = false;
         let chosenCard = null;
 
         function flipCard() {
+            if (hasFlipped) return;
+            
+            chosenCard = tarotDeck[Math.floor(Math.random() * tarotDeck.length)];
+            
+            // Ищем картинку JPG
+            const imgPath = `cards/${chosenCard.id}.jpg`;
+            
+            // Предзагрузка, чтобы не моргало
+            const imgObj = new Image();
+            imgObj.src = imgPath;
+            imgObj.onload = () => {
+                document.getElementById('chosen-card-img').src = imgPath;
+                
+                document.getElementById('c_name').innerText = chosenCard.name;
+                document.getElementById('c_desc').innerText = chosenCard.desc;
+
+                const card = document.querySelector('.card');
+                card.classList.add('is-flipped');
+                
+                document.getElementById('status').innerText = "Судьба открыта";
+                
+                setTimeout(() => {
+                     document.getElementById('cardInfoBlock').classList.add('visible');
+                    document.getElementById('sendBtn').classList.add('visible');
+                }, 800);
+            };
+            
+            hasFlipped = true;
+        }
+
+        function sendResult() {
+            if (!chosenCard) return;
+            const data = JSON.stringify({
+                type: "tarot_result",
+                card_name: chosenCard.name,
+                card_id: chosenCard.id
+            });
+            tg.sendData(data);
+        }
+    </script>
+</body>
+</html>

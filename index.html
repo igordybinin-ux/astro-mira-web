@@ -8,185 +8,134 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
     <style>
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background: radial-gradient(circle at center, #1a0b2e 0%, #000000 100%);
-            color: #e0e0e0;
-            font-family: 'Montserrat', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            -webkit-tap-highlight-color: transparent; /* Убирает синий квадрат при клике */
+            color: #e0e0e0; font-family: 'Montserrat', sans-serif;
+            display: flex; flex-direction: column; align-items: center;
+            height: 100vh; overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* --- МЕНЮ --- */
         #menu-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            width: 100%;
-            position: absolute;
-            z-index: 10;
-            background: #111; /* Непрозрачный фон */
-            transition: opacity 0.5s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100%; width: 100%; position: absolute; z-index: 10;
+            background: #111; transition: opacity 0.5s;
         }
         
         .menu-title {
-            font-family: 'Cinzel', serif;
-            font-size: 24px;
-            color: #ffd700;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-align: center;
+            font-family: 'Cinzel', serif; font-size: 24px; color: #ffd700;
+            margin-bottom: 30px; text-transform: uppercase; letter-spacing: 2px; text-align: center;
         }
 
         .menu-btn {
             background: linear-gradient(45deg, #1c1c24, #2a2a35);
-            border: 1px solid #c5a059;
-            color: #fff;
-            padding: 15px 25px;
-            margin: 8px;
-            border-radius: 8px;
-            font-family: 'Cinzel', serif;
-            font-size: 15px;
-            width: 85%;
-            max-width: 320px;
-            cursor: pointer;
+            border: 1px solid #c5a059; color: #fff;
+            padding: 15px 25px; margin: 8px; border-radius: 8px;
+            font-family: 'Cinzel', serif; font-size: 14px;
+            width: 85%; max-width: 320px; cursor: pointer;
             transition: transform 0.2s, background 0.3s;
+            position: relative; /* Для позиционирования бэйджей */
         }
         .menu-btn:active { transform: scale(0.95); background: #c5a059; color: #000; }
         .menu-btn span { display: block; font-size: 11px; font-family: 'Montserrat', sans-serif; color: #aaa; margin-top: 4px; text-transform: none; }
 
+        /* 🔥 ИНТЕГРАЦИЯ: БЭЙДЖИ (ЦЕННИКИ) */
+        .badge {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            background: #ffd700; color: #000; padding: 3px 6px; border-radius: 4px;
+            font-size: 9px; font-weight: bold; font-family: 'Montserrat', sans-serif;
+        }
+        .badge-free { background: #4CAF50; color: #fff; }
+        .badge-sale { background: #ff4444; color: #fff; border: 1px solid #fff; }
+
         /* --- ИГРОВОЕ ПОЛЕ --- */
         #game-screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            padding-top: 10px; /* Чуть меньше отступ сверху */
+            display: none; flex-direction: column; align-items: center;
+            width: 100%; height: 100%; padding-top: 5px;
         }
 
         h2 { 
-            font-family: 'Cinzel', serif;
-            margin-bottom: 5px;
-            font-weight: 400; 
-            color: #ffd700;
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            text-align: center; 
-            font-size: 16px;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-            height: 25px;
+            font-family: 'Cinzel', serif; margin-bottom: 5px; font-weight: 400; 
+            color: #ffd700; text-transform: uppercase; letter-spacing: 2px; 
+            text-align: center; font-size: 16px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); height: 25px;
         }
 
         /* Контейнер для карт */
         .cards-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 480px; /* Чуть больше места */
+            display: flex; justify-content: center; align-items: center;
+            width: 100%; height: 500px; /* Увеличил высоту для 10 карт */
             transition: all 0.3s;
         }
 
-        /* 🔥 СТИЛИ ДЛЯ 5 и 10 КАРТ (Многострочность) */
-        .cards-container.mode-five, .cards-container.mode-ten {
-            flex-wrap: wrap; 
-            align-content: center;
-        }
+        .cards-container.mode-five, .cards-container.mode-ten { flex-wrap: wrap; align-content: center; }
 
-        /* Обертка для карты и подписи */
-        .card-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0 4px;
-            perspective: 1000px;
-        }
+        .card-wrapper { display: flex; flex-direction: column; align-items: center; margin: 0 4px; perspective: 1000px; }
         
-        /* Сама карта */
         .card {
-            position: relative;
-            transform-style: preserve-3d;
+            position: relative; transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
             border-radius: 8px;
         }
 
-        /* --- РАЗМЕРЫ КАРТ ДЛЯ РАЗНЫХ РЕЖИМОВ --- */
+        /* --- РАЗМЕРЫ КАРТ --- */
         
-        /* 1 карта (стандарт) */
+        /* 1 карта */
         .mode-single .card { width: 240px; height: 360px; }
         
         /* 3 карты */
         .mode-triple .card { width: 100px; height: 155px; }
 
-        /* 5 карт (2 ряда) */
+        /* 5 карт */
         .mode-five .card { width: 85px; height: 130px; }
         .mode-five .card-wrapper { margin: 5px 8px; }
 
-        /* 🔥 10 КАРТ (4 ряда, маленькие) */
-        .mode-ten .card { width: 60px; height: 90px; border-radius: 4px; }
-        .mode-ten .card-wrapper { margin: 3px 5px; }
-        /* Чуть уменьшим шрифт подписи для 10 карт */
-        .mode-ten .card-label { font-size: 8px; margin-top: 2px; max-width: 60px; overflow: hidden; white-space: nowrap; }
+        /* 🔥 ИНТЕГРАЦИЯ: 10 КАРТ (КРУПНЫЕ, 3 в ряд) */
+        .mode-ten .card-wrapper { 
+            width: 29%; /* Почти треть экрана */
+            margin: 3px 1%; 
+        }
+        .mode-ten .card { 
+            width: 100%; 
+            height: 115px; /* Крупная высота */
+            border-radius: 5px;
+        }
+        .mode-ten .card-label { font-size: 8px; margin-top: 2px; height: 10px; max-width: 100%; }
 
-
-        /* Адаптив для узких экранов */
+        /* Адаптив */
         @media (max-width: 340px) { 
             .mode-triple .card { width: 85px; height: 130px; } 
             .mode-five .card { width: 70px; height: 110px; }
-            .mode-ten .card { width: 50px; height: 75px; }
+            .mode-ten .card { height: 95px; }
         }
 
         .card.is-flipped { transform: rotateY(180deg); }
 
         .card__face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 8px; /* Скругление */
-            overflow: hidden;
-            border: 2px solid #c5a059;
-            box-sizing: border-box;
-            background: #000;
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            border-radius: 8px; overflow: hidden; border: 2px solid #c5a059;
+            box-sizing: border-box; background: #000;
         }
-        /* Для 10 карт уменьшаем радиус и толщину рамки */
-        .mode-ten .card__face { border-radius: 4px; border-width: 1px; }
+        .mode-ten .card__face { border-radius: 5px; border-width: 1px; }
 
         .card__face--front { transform: rotateY(0deg); }
         .card__face--back { transform: rotateY(180deg); }
-        
         .card-img-content { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Подписи СНАРУЖИ карты */
+        /* Подписи */
         .card-label {
-            margin-top: 8px;
-            text-align: center;
-            font-size: 10px;
-            color: #aaa;
-            text-transform: uppercase;
-            font-family: 'Montserrat', sans-serif;
-            letter-spacing: 1px;
-            height: 12px;
+            margin-top: 8px; text-align: center; font-size: 10px; color: #aaa;
+            text-transform: uppercase; font-family: 'Montserrat', sans-serif;
+            letter-spacing: 1px; height: 12px;
         }
         .mode-five .card-label { margin-top: 4px; font-size: 9px; }
 
         /* Инфо блок */
         .info-block {
-            margin-top: 5px;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.5s;
-            height: 40px; /* Чуть уменьшил высоту */
+            margin-top: 5px; text-align: center; opacity: 0;
+            transition: opacity 0.5s; height: 40px;
         }
         .info-block.visible { opacity: 1; }
         .card-name-text { font-family: 'Cinzel', serif; color: #ffd700; font-size: 16px; margin-bottom: 2px; }
@@ -194,47 +143,44 @@
 
         /* Кнопка */
         .action-btn {
-            margin-top: auto;
-            margin-bottom: 20px;
-            padding: 12px 40px;
-            background: linear-gradient(45deg, #c5a059, #ffd700);
-            color: #000;
-            border: none;
-            border-radius: 4px;
-            font-family: 'Cinzel', serif;
-            font-weight: 700;
-            font-size: 13px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s;
-            text-transform: uppercase;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-            cursor: pointer;
+            margin-top: auto; margin-bottom: 20px; padding: 12px 40px;
+            background: linear-gradient(45deg, #c5a059, #ffd700); color: #000;
+            border: none; border-radius: 4px; font-family: 'Cinzel', serif;
+            font-weight: 700; font-size: 13px; opacity: 0; pointer-events: none;
+            transition: opacity 0.5s; text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); cursor: pointer;
         }
         .action-btn.visible { opacity: 1; pointer-events: all; }
         .action-btn:active { transform: scale(0.95); opacity: 0.8; }
-
     </style>
 </head>
 <body>
 
     <div id="menu-screen">
         <div class="menu-title">Выберите расклад</div>
+        
         <button class="menu-btn" onclick="startGame('single')">
             Карта Дня
             <span>Один совет на сегодня</span>
+            <div class="badge badge-free">FREE</div>
         </button>
+        
         <button class="menu-btn" onclick="startGame('triple')">
             Три Судьбы
             <span>Прошлое / Настоящее / Будущее</span>
+            <div class="badge">PRO</div>
         </button>
+        
         <button class="menu-btn" onclick="startGame('five')">
             Полный Разбор
             <span>5 карт: Скрытое и Итоги</span>
+            <div class="badge">PRO</div>
         </button>
-        <button class="menu-btn" onclick="startGame('ten')" style="border-color: #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.2);">
-            Кельтский Крест (PRO)
+        
+        <button class="menu-btn" onclick="startGame('ten')" style="border-color: #ff4444; box-shadow: 0 0 10px rgba(255,68,68,0.2);">
+            Кельтский Крест
             <span>Полный расклад (10 карт)</span>
+            <div class="badge badge-sale">290₽ | 99₽ PRO</div>
         </button>
     </div>
 
@@ -315,7 +261,7 @@
             if (currentMode === 'single') container.classList.add('mode-single');
             else if (currentMode === 'triple') container.classList.add('mode-triple');
             else if (currentMode === 'five') container.classList.add('mode-five');
-            else if (currentMode === 'ten') container.classList.add('mode-ten'); // 🔥 Добавил класс 10 карт
+            else if (currentMode === 'ten') container.classList.add('mode-ten');
 
             let count = 1;
             let labels = [];
@@ -328,7 +274,7 @@
             } else if (currentMode === 'five') {
                 count = 5;
                 labels = ["Прошлое", "Настоящее", "Будущее", "Скрытое", "Итог"];
-            } else if (currentMode === 'ten') { // 🔥 Логика для 10 карт
+            } else if (currentMode === 'ten') { 
                 count = 10;
                 labels = ["Текущее", "Проблема", "Прошлое", "Будущее", "Сознание", "Подсознание", "Совет", "Внешнее", "Страхи", "Итог"];
             }
@@ -355,7 +301,7 @@
 
                 wrapper.appendChild(cardEl);
 
-                // Подписи для режимов 3, 5 и 10 карт
+                // Подписи для всех режимов кроме single
                 if (currentMode !== 'single') {
                     const labelEl = document.createElement('div');
                     labelEl.className = 'card-label';
@@ -412,7 +358,6 @@
                         card_id: selectedCards[0].id
                     };
                 } else {
-                    // Лейблы для позиций
                     let posLabels = [];
                     let type = "tarot_spread_3";
                     
@@ -422,7 +367,7 @@
                     } else if (currentMode === 'five') {
                         posLabels = ["Прошлое", "Настоящее", "Будущее", "Скрытое", "Итог"];
                         type = "tarot_spread_5";
-                    } else if (currentMode === 'ten') { // 🔥 Лейблы для 10 карт
+                    } else if (currentMode === 'ten') {
                         posLabels = ["Текущее", "Проблема", "Прошлое", "Будущее", "Сознание", "Подсознание", "Совет", "Внешнее", "Страхи", "Итог"];
                         type = "tarot_spread_10";
                     }

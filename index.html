@@ -14,12 +14,6 @@
             display: flex; flex-direction: column; align-items: center;
             height: 100vh; overflow: hidden;
             -webkit-tap-highlight-color: transparent;
-            
-            /* 🔥 ФИКС ДЛЯ КОМПЬЮТЕРА: Ограничиваем ширину, чтобы не растягивалось */
-            max-width: 450px; 
-            margin: 0 auto; /* Центрируем приложение */
-            border-left: 1px solid #333; /* Легкие рамки для красоты на ПК */
-            border-right: 1px solid #333;
         }
 
         /* --- МЕНЮ --- */
@@ -41,11 +35,12 @@
             font-family: 'Cinzel', serif; font-size: 14px;
             width: 85%; max-width: 320px; cursor: pointer;
             transition: transform 0.2s, background 0.3s;
-            position: relative;
+            position: relative; 
         }
         .menu-btn:active { transform: scale(0.95); background: #c5a059; color: #000; }
         .menu-btn span { display: block; font-size: 11px; font-family: 'Montserrat', sans-serif; color: #aaa; margin-top: 4px; text-transform: none; }
 
+        /* БЭЙДЖИ */
         .badge {
             position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
             background: #ffd700; color: #000; padding: 3px 6px; border-radius: 4px;
@@ -70,7 +65,7 @@
         /* Контейнер для карт */
         .cards-container {
             display: flex; justify-content: center; align-items: center;
-            width: 100%; height: 500px;
+            width: 100%; height: 500px; /* Увеличил высоту для 10 карт */
             transition: all 0.3s;
         }
 
@@ -85,7 +80,7 @@
             border-radius: 8px;
         }
 
-        /* --- РАЗМЕРЫ И ПРОПОРЦИИ --- */
+        /* --- РАЗМЕРЫ КАРТ --- */
         
         /* 1 карта */
         .mode-single .card { width: 240px; height: 360px; }
@@ -97,25 +92,23 @@
         .mode-five .card { width: 85px; height: 130px; }
         .mode-five .card-wrapper { margin: 5px 8px; }
 
-        /* 🔥 10 КАРТ (ИСПРАВЛЕНИЕ) */
-        /* Делаем их фиксированными, чтобы не плющило */
+        /* 🔥 10 КАРТ (СТРОГО 3 в РЯД) */
         .mode-ten .card-wrapper { 
-            width: auto; 
-            margin: 2px 4px; 
+            width: 31%; /* 31% * 3 = 93%, оставляем место на отступы. Это даст 3 ряда по 3 карты. */
+            margin: 2px 1%; 
         }
         .mode-ten .card { 
-            width: 75px;  /* Фиксированная ширина */
-            height: 110px; /* Фиксированная высота (Пропорция ~2:3) */
+            width: 100%; 
+            height: 110px; /* Крупная высота */
             border-radius: 5px;
         }
-        .mode-ten .card-label { font-size: 7px; margin-top: 2px; height: 9px; max-width: 75px; overflow: hidden; white-space: nowrap; }
+        .mode-ten .card-label { font-size: 8px; margin-top: 2px; height: 10px; max-width: 100%; }
 
-
-        /* Адаптив для совсем мелких телефонов */
+        /* Адаптив */
         @media (max-width: 340px) { 
             .mode-triple .card { width: 85px; height: 130px; } 
             .mode-five .card { width: 70px; height: 110px; }
-            .mode-ten .card { width: 65px; height: 95px; }
+            .mode-ten .card { height: 90px; }
         }
 
         .card.is-flipped { transform: rotateY(180deg); }
@@ -179,8 +172,8 @@
         </button>
         
         <button class="menu-btn" onclick="startGame('five')">
-            Полный Разбор
-            <span>5 карт: Скрытое и Итоги</span>
+            Подкова (5 карт)
+            <span>Скрытое и Итоги</span>
             <div class="badge">PRO</div>
         </button>
         
@@ -263,6 +256,7 @@
 
             const shuffled = [...tarotDeck].sort(() => 0.5 - Math.random());
             
+            // Сброс и установка классов
             container.className = 'cards-container';
             if (currentMode === 'single') container.classList.add('mode-single');
             else if (currentMode === 'triple') container.classList.add('mode-triple');
@@ -307,6 +301,7 @@
 
                 wrapper.appendChild(cardEl);
 
+                // Подписи для всех режимов кроме single
                 if (currentMode !== 'single') {
                     const labelEl = document.createElement('div');
                     labelEl.className = 'card-label';

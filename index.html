@@ -60,21 +60,35 @@
         }
         #gallery-tabs {
             width: 100%; display: flex; overflow-x: auto; background: #1a1a1a; padding: 10px 0;
-            scrollbar-width: none; /* Убирает скроллбар в Firefox */
+            scrollbar-width: none;
         }
-        #gallery-tabs::-webkit-scrollbar { display: none; } /* Убирает скроллбар в Chrome */
+        #gallery-tabs::-webkit-scrollbar { display: none; }
         .tab-btn {
             background: none; border: none; color: #777; padding: 5px 15px; white-space: nowrap;
             font-family: 'Cinzel', serif; font-size: 12px; cursor: pointer; transition: 0.3s;
         }
         .tab-btn.active { color: #ffd700; border-bottom: 2px solid #ffd700; }
+
         #gallery-grid {
             flex: 1; width: 100%; overflow-y: auto; display: grid;
             grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px;
             align-content: start; box-sizing: border-box;
         }
-        .gallery-item { width: 100%; aspect-ratio: 2/3; border-radius: 4px; overflow: hidden; border: 1px solid #333; }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 🔥 СТИЛЬ КАРТЫ В ГАЛЕРЕЕ */
+        .gallery-item { 
+            width: 100%; aspect-ratio: 2/3; border-radius: 6px; overflow: hidden; 
+            border: 1px solid #c5a059; background: #111; position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: transform 0.2s;
+        }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s; }
+
+        /* ЭФФЕКТ ЗАКРЫТОЙ КАРТЫ */
+        .gallery-item.locked img { filter: grayscale(100%) brightness(25%); }
+        .gallery-item.locked::after {
+            content: "🔒"; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); font-size: 18px; opacity: 0.4;
+        }
 
         /* МОДАЛКА */
         #card-modal {
@@ -112,8 +126,6 @@
         .mode-single .card { width: 240px; height: 360px; }
         .mode-triple .card { width: 100px; height: 155px; }
         .mode-five .card { width: 85px; height: 130px; }
-        .mode-five .card-wrapper { margin: 5px 8px; }
-
         .mode-ten .card-wrapper { width: 31%; margin: 2px 1%; }
         .mode-ten .card { width: 100%; height: 110px; border-radius: 5px; }
         .mode-ten .card-label { font-size: 8px; margin-top: 2px; height: 10px; max-width: 100%; }
@@ -228,7 +240,6 @@
         tg.expand(); 
 
         const tarotDeck = [
-            // Старшие Арканы
             {name: "Шут", id: "fool", type: "major", desc: "Начало пути, свобода, риск и вера в чудо."},
             {name: "Маг", id: "magician", type: "major", desc: "Воля, мастерство, способность манипулировать реальностью."},
             {name: "Жрица", id: "priestess", type: "major", desc: "Интуиция, тайны, глубокое подсознательное знание."},
@@ -251,85 +262,79 @@
             {name: "Солнце", id: "sun", type: "major", desc: "Успех, радость, ясность и жизненная сила."},
             {name: "Суд", id: "judgement", type: "major", desc: "Возрождение, призыв к действию, прощение."},
             {name: "Мир", id: "world", type: "major", desc: "Завершение цикла, гармония, триумф."},
-
-            // Жезлы
             {name: "Туз Жезлов", id: "wands_ace", type: "wands", desc: "Импульс, творческая искра, новая идея."},
-            {name: "2 Жезлов", id: "wands_2", type: "wands", desc: "Планирование, владение ситуацией, выбор пути."},
-            {name: "3 Жезлов", id: "wands_3", type: "wands", desc: "Перспективы, ожидание результатов, расширение."},
-            {name: "4 Жезлов", id: "wands_4", type: "wands", desc: "Праздник, стабильный успех, радость дома."},
-            {name: "5 Жезлов", id: "wands_5", type: "wands", desc: "Конкуренция, борьба амбиций, споры."},
-            {name: "6 Жезлов", id: "wands_6", type: "wands", desc: "Победа, признание, триумфальное возвращение."},
-            {name: "7 Жезлов", id: "wands_7", type: "wands", desc: "Защита своих позиций, решительность под давлением."},
+            {name: "2 Жезлов", id: "wands_2", type: "wands", desc: "Планирование, выбор пути."},
+            {name: "3 Жезлов", id: "wands_3", type: "wands", desc: "Перспективы, ожидание результатов."},
+            {name: "4 Жезлов", id: "wands_4", type: "wands", desc: "Праздник, стабильный успех."},
+            {name: "5 Жезлов", id: "wands_5", type: "wands", desc: "Конкуренция, борьба амбиций."},
+            {name: "6 Жезлов", id: "wands_6", type: "wands", desc: "Победа, признание."},
+            {name: "7 Жезлов", id: "wands_7", type: "wands", desc: "Защита своих позиций."},
             {name: "8 Жезлов", id: "wands_8", type: "wands", desc: "Скорость, полет стрел, быстрые новости."},
-            {name: "9 Жезлов", id: "wands_9", type: "wands", desc: "Последний рубеж, стойкость, опыт прошлых битв."},
-            {name: "10 Жезлов", id: "wands_10", type: "wands", desc: "Тяжелое бремя, перегрузка, предел сил."},
-            {name: "Паж Жезлов", id: "wands_page", type: "wands", desc: "Юношеский пыл, новости о проектах, энтузиазм."},
-            {name: "Рыцарь Жезлов", id: "wands_knight", type: "wands", desc: "Напор, страсть, стремительное приключение."},
-            {name: "Королева Жезлов", id: "wands_queen", type: "wands", desc: "Харизма, уверенность, энергия огня."},
-            {name: "Король Жезлов", id: "wands_king", type: "wands", desc: "Лидерство, решительность, зрелое видение."},
-
-            // Кубки
-            {name: "Туз Кубков", id: "cups_ace", type: "cups", desc: "Источник чувств, любовь, вдохновение."},
+            {name: "9 Жезлов", id: "wands_9", type: "wands", desc: "Последний рубеж, стойкость."},
+            {name: "10 Жезлов", id: "wands_10", type: "wands", desc: "Тяжелое бремя, предел сил."},
+            {name: "Паж Жезлов", id: "wands_page", type: "wands", desc: "Юношеский пыл, энтузиазм."},
+            {name: "Рыцарь Жезлов", id: "wands_knight", type: "wands", desc: "Напор, стремительное приключение."},
+            {name: "Королева Жезлов", id: "wands_queen", type: "wands", desc: "Харизма, уверенность."},
+            {name: "Король Жезлов", id: "wands_king", type: "wands", desc: "Лидерство, решительность."},
+            {name: "Туз Кубков", id: "cups_ace", type: "cups", desc: "Источник чувств, любовь."},
             {name: "2 Кубков", id: "cups_2", type: "cups", desc: "Встреча, союз, взаимная симпатия."},
-            {name: "3 Кубков", id: "cups_3", type: "cups", desc: "Дружба, праздник, радость в кругу близких."},
-            {name: "4 Кубков", id: "cups_4", type: "cups", desc: "Пресыщение, апатия, незамеченный шанс."},
-            {name: "5 Кубков", id: "cups_5", type: "cups", desc: "Печаль о потерянном, разочарование."},
-            {name: "6 Кубков", id: "cups_6", type: "cups", desc: "Ностальгия, воспоминания, старый друг."},
-            {name: "7 Кубков", id: "cups_7", type: "cups", desc: "Иллюзии, выбор из множества призрачных вариантов."},
-            {name: "8 Кубков", id: "cups_8", type: "cups", desc: "Уход в поисках высшего, отказ от привычного."},
-            {name: "9 Кубков", id: "cups_9", type: "cups", desc: "Исполнение желаний, довольство собой."},
-            {name: "10 Кубков", id: "cups_10", type: "cups", desc: "Семейное счастье, эмоциональный триумф."},
-            {name: "Паж Кубков", id: "cups_page", type: "cups", desc: "Нежные чувства, воображение, весть о любви."},
-            {name: "Рыцарь Кубков", id: "cups_knight", type: "cups", desc: "Романтика, предложение, рыцарский жест."},
-            {name: "Королева Кубков", id: "cups_queen", type: "cups", desc: "Интуиция, эмпатия, глубокие переживания."},
-            {name: "Король Кубков", id: "cups_king", type: "cups", desc: "Зрелость чувств, поддержка, мудрость."},
-
-            // Мечи
+            {name: "3 Кубков", id: "cups_3", type: "cups", desc: "Дружба, праздник."},
+            {name: "4 Кубков", id: "cups_4", type: "cups", desc: "Пресыщение, апатия."},
+            {name: "5 Кубков", id: "cups_5", type: "cups", desc: "Печаль о потерянном."},
+            {name: "6 Кубков", id: "cups_6", type: "cups", desc: "Ностальгия, воспоминания."},
+            {name: "7 Кубков", id: "cups_7", type: "cups", desc: "Иллюзии, выбор из множества вариантов."},
+            {name: "8 Кубков", id: "cups_8", type: "cups", desc: "Уход в поисках высшего."},
+            {name: "9 Кубков", id: "cups_9", type: "cups", desc: "Исполнение желаний, довольство."},
+            {name: "10 Кубков", id: "cups_10", type: "cups", desc: "Семейное счастье."},
+            {name: "Паж Кубков", id: "cups_page", type: "cups", desc: "Нежные чувства, воображение."},
+            {name: "Рыцарь Кубков", id: "cups_knight", type: "cups", desc: "Романтика, предложение."},
+            {name: "Королева Кубков", id: "cups_queen", type: "cups", desc: "Интуиция, эмпатия."},
+            {name: "Король Кубков", id: "cups_king", type: "cups", desc: "Зрелость чувств, мудрость."},
             {name: "Туз Мечей", id: "swords_ace", type: "swords", desc: "Ясное решение, отсечение лишнего."},
-            {name: "2 Мечей", id: "swords_2", type: "swords", desc: "Тупик, закрытость, попытка найти баланс."},
+            {name: "2 Мечей", id: "swords_2", type: "swords", desc: "Тупик, закрытость."},
             {name: "3 Мечей", id: "swords_3", type: "swords", desc: "Разбитое сердце, горькая правда."},
-            {name: "4 Мечей", id: "swords_4", type: "swords", desc: "Отдых, восстановление сил, медитация."},
-            {name: "5 Мечей", id: "swords_5", type: "swords", desc: "Жестокая победа, конфликт интересов."},
-            {name: "6 Мечей", id: "swords_6", type: "swords", desc: "Уход от проблем, переход к спокойствию."},
-            {name: "7 Мечей", id: "swords_7", type: "swords", desc: "Хитрость, тактика, уход от ответственности."},
-            {name: "8 Мечей", id: "swords_8", type: "swords", desc: "Плен мыслей, самоограничения, страх действия."},
-            {name: "9 Мечей", id: "swords_9", type: "swords", desc: "Тревога, бессонница, ночные кошмары."},
-            {name: "10 Мечей", id: "swords_10", type: "swords", desc: "Полный крах, дно ситуации, конец мучений."},
-            {name: "Паж Мечей", id: "swords_page", type: "swords", desc: "Острый ум, сбор информации, критика."},
-            {name: "Рыцарь Мечей", id: "swords_knight", type: "swords", desc: "Напор, порыв, интеллектуальный штурм."},
-            {name: "Королева Мечей", id: "swords_queen", type: "swords", desc: "Независимость, логика, честность."},
-            {name: "Король Мечей", id: "swords_king", type: "swords", desc: "Закон, стратегия и справедливость."},
-
-            // Монеты
+            {name: "4 Мечей", id: "swords_4", type: "swords", desc: "Отдых, восстановление сил."},
+            {name: "5 Мечей", id: "swords_5", type: "swords", desc: "Жестокая победа, конфликт."},
+            {name: "6 Мечей", id: "swords_6", type: "swords", desc: "Уход от проблем."},
+            {name: "7 Мечей", id: "swords_7", type: "swords", desc: "Хитрость, тактика."},
+            {name: "8 Мечей", id: "swords_8", type: "swords", desc: "Плен мыслей, самоограничения."},
+            {name: "9 Мечей", id: "swords_9", type: "swords", desc: "Тревога, бессонница."},
+            {name: "10 Мечей", id: "swords_10", type: "swords", desc: "Полный крах, конец мучений."},
+            {name: "Паж Мечей", id: "swords_page", type: "swords", desc: "Острый ум, критика."},
+            {name: "Рыцарь Мечей", id: "swords_knight", type: "swords", desc: "Напор, порыв."},
+            {name: "Королева Мечей", id: "swords_queen", type: "swords", desc: "Независимость, логика."},
+            {name: "Король Мечей", id: "swords_king", type: "swords", desc: "Закон, стратегия."},
             {name: "Туз Монет", id: "pentacles_ace", type: "pentacles", desc: "Материальный дар, шанс на прибыль."},
-            {name: "2 Монет", id: "pentacles_2", type: "pentacles", desc: "Суета, балансировка делами, гибкость."},
-            {name: "3 Монет", id: "pentacles_3", type: "pentacles", desc: "Мастерство, работа в команде."},
-            {name: "4 Монет", id: "pentacles_4", type: "pentacles", desc: "Скупость, удержание накопленного, страх потерь."},
-            {name: "5 Монет", id: "pentacles_5", type: "pentacles", desc: "Кризис, нехватка ресурсов, испытание."},
-            {name: "6 Монет", id: "pentacles_6", type: "pentacles", desc: "Помощь, благотворительность, обмен."},
-            {name: "7 Монет", id: "pentacles_7", type: "pentacles", desc: "Терпение, ожидание урожая, долгий проект."},
-            {name: "8 Монет", id: "pentacles_8", type: "pentacles", desc: "Трудолюбие, оттачивание деталей, ремесло."},
-            {name: "9 Монет", id: "pentacles_9", type: "pentacles", desc: "Роскошь, самодостаточность, успех."},
-            {name: "10 Монет", id: "pentacles_10", type: "pentacles", desc: "Наследие, благополучие рода, стабильность."},
-            {name: "Паж Монет", id: "pentacles_page", type: "pentacles", desc: "Ученичество, практические новости."},
-            {name: "Рыцарь Монет", id: "pentacles_knight", type: "pentacles", desc: "Упорство, надежность, верный путь."},
-            {name: "Королева Монет", id: "pentacles_queen", type: "pentacles", desc: "Практичность, забота о доме, изобилие."},
-            {name: "Король Монет", id: "pentacles_king", type: "pentacles", desc: "Финансовый успех, хозяин жизни."}
+            {name: "2 Монет", id: "pentacles_2", type: "pentacles", desc: "Суета, гибкость."},
+            {name: "3 Монет", id: "pentacles_3", type: "pentacles", desc: "Мастерство, команда."},
+            {name: "4 Монет", id: "pentacles_4", type: "pentacles", desc: "Скупость, страх потерь."},
+            {name: "5 Монет", id: "pentacles_5", type: "pentacles", desc: "Кризис, нехватка ресурсов."},
+            {name: "6 Монет", id: "pentacles_6", type: "pentacles", desc: "Помощь, благотворительность."},
+            {name: "7 Монет", id: "pentacles_7", type: "pentacles", desc: "Терпение, ожидание урожая."},
+            {name: "8 Монет", id: "pentacles_8", type: "pentacles", desc: "Трудолюбие, ремесло."},
+            {name: "9 Монет", id: "pentacles_9", type: "pentacles", desc: "Роскошь, самодостаточность."},
+            {name: "10 Монет", id: "pentacles_10", type: "pentacles", desc: "Наследие, стабильность."},
+            {name: "Паж Монет", id: "pentacles_page", type: "pentacles", desc: "Ученичество, новости."},
+            {name: "Рыцарь Монет", id: "pentacles_knight", type: "pentacles", desc: "Упорство, надежность."},
+            {name: "Королева Монет", id: "pentacles_queen", type: "pentacles", desc: "Практичность, изобилие."},
+            {name: "Король Монет", id: "pentacles_king", type: "pentacles", desc: "Финансовый успех."}
         ];
 
-        let currentMode = 'single';
-        let selectedCards = []; 
-        let flippedCount = 0;
-
-        function preloadImages() {
-            new Image().src = "cards/back.jpg";
-            tarotDeck.forEach(card => {
-                new Image().src = `cards/${card.id}.jpg`;
-            });
+        // 🔥 ЛОГИКА КОЛЛЕКЦИИ (LOCAL STORAGE)
+        function unlockCard(cardId) {
+            let collection = JSON.parse(localStorage.getItem('mira_collection') || '[]');
+            if (!collection.includes(cardId)) {
+                collection.push(cardId);
+                localStorage.setItem('mira_collection', JSON.stringify(collection));
+            }
         }
-        preloadImages();
 
-        // ФУНКЦИИ ГАЛЕРЕИ
+        function isCardUnlocked(cardId) {
+            let collection = JSON.parse(localStorage.getItem('mira_collection') || '[]');
+            return collection.includes(cardId);
+        }
+
+        // ГАЛЕРЕЯ
         function openGallery() {
             document.getElementById('gallery-screen').style.display = 'flex';
             filterGallery('major'); 
@@ -341,29 +346,30 @@
 
         function filterGallery(type, event) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            if (event) {
-                event.target.classList.add('active');
-            } else {
-                document.querySelector(`.tab-btn[onclick*="${type}"]`).classList.add('active');
-            }
+            if (event) { event.target.classList.add('active'); } 
+            else { document.querySelector(`.tab-btn[onclick*="${type}"]`).classList.add('active'); }
 
             const grid = document.getElementById('gallery-grid');
             grid.innerHTML = '';
 
             const filtered = tarotDeck.filter(c => c.type === type);
             filtered.forEach(card => {
+                const unlocked = isCardUnlocked(card.id);
                 const item = document.createElement('div');
-                item.className = 'gallery-item';
-                item.onclick = () => showCardDetail(card);
+                item.className = 'gallery-item' + (unlocked ? '' : ' locked');
+                item.onclick = () => showCardDetail(card, unlocked);
                 item.innerHTML = `<img src="cards/${card.id}.jpg">`;
                 grid.appendChild(item);
             });
         }
 
-        function showCardDetail(card) {
-            document.getElementById('modal-img').src = `cards/${card.id}.jpg`;
-            document.getElementById('modal-title').innerText = card.name;
-            document.getElementById('modal-desc').innerText = card.desc;
+        function showCardDetail(card, unlocked) {
+            const modalImg = document.getElementById('modal-img');
+            modalImg.src = `cards/${card.id}.jpg`;
+            modalImg.style.filter = unlocked ? 'none' : 'grayscale(100%) brightness(25%)';
+            
+            document.getElementById('modal-title').innerText = unlocked ? card.name : "Карта скрыта";
+            document.getElementById('modal-desc').innerText = unlocked ? card.desc : "Эта энергия еще не проявлена в твоей судьбе. Делай расклады, чтобы открыть её.";
             document.getElementById('card-modal').style.display = 'flex';
         }
 
@@ -388,16 +394,12 @@
             container.className = 'cards-container';
             container.classList.add(`mode-${currentMode}`);
 
-            let count = 1;
+            let count = (currentMode === 'single' ? 1 : (currentMode === 'triple' ? 3 : (currentMode === 'five' ? 5 : 10)));
             let labels = [];
 
-            if (currentMode === 'single') count = 1;
-            else if (currentMode === 'triple') { count = 3; labels = ["Прошлое", "Настоящее", "Будущее"]; }
-            else if (currentMode === 'five') { count = 5; labels = ["Прошлое", "Настоящее", "Будущее", "Скрытое", "Итог"]; }
-            else if (currentMode === 'ten') { 
-                count = 10; 
-                labels = ["Текущее", "Проблема", "Прошлое", "Будущее", "Сознание", "Подсознание", "Совет", "Внешнее", "Страхи", "Итог"]; 
-            }
+            if (currentMode === 'triple') labels = ["Прошлое", "Настоящее", "Будущее"];
+            else if (currentMode === 'five') labels = ["Прошлое", "Настоящее", "Будущее", "Скрытое", "Итог"];
+            else if (currentMode === 'ten') labels = ["Текущее", "Проблема", "Прошлое", "Будущее", "Сознание", "Подсознание", "Совет", "Внешнее", "Страхи", "Итог"];
 
             for (let i = 0; i < count; i++) {
                 const cardData = shuffled[i];
@@ -426,6 +428,10 @@
             if (element.classList.contains('is-flipped')) return;
             element.classList.add('is-flipped');
             flippedCount++;
+            
+            // 🔥 ОТКРЫВАЕМ КАРТУ ДЛЯ КОЛЛЕКЦИИ
+            unlockCard(data.id);
+
             if (currentMode === 'single') {
                 document.getElementById('status-text').innerText = "Судьба открыта";
                 document.getElementById('info-name').innerText = data.name;

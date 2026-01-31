@@ -21,7 +21,6 @@
             font-family: 'Montserrat', sans-serif;
             margin: 0;
             padding: 0;
-            /* Космический фон */
             background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
             color: var(--text-color);
             min-height: 100vh;
@@ -32,7 +31,6 @@
             overflow-x: hidden;
         }
 
-        /* Добавляем звезды на фон */
         body::before {
             content: "";
             position: absolute;
@@ -106,7 +104,6 @@
             box-shadow: 0 0 15px rgba(163, 177, 255, 0.2);
         }
 
-        /* Стили для чекбокса */
         .checkbox-wrapper {
             display: flex;
             align-items: center;
@@ -147,13 +144,11 @@
             box-shadow: 0 2px 10px rgba(118, 75, 162, 0.3);
         }
 
-        /* Анимация появления */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Скрываем нативные иконки календаря в темной теме (для эстетики) */
         input[type="date"]::-webkit-calendar-picker-indicator,
         input[type="time"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
@@ -179,7 +174,7 @@
 
         <div class="form-group">
             <label>⏰ Время рождения (важно для домов)</label>
-            <input type="time" id="time" value="12:00">
+            <input type="time" id="time">
         </div>
 
         <div class="form-group">
@@ -199,16 +194,16 @@
         let tg = window.Telegram.WebApp;
         tg.expand(); 
 
-        // Настраиваем цвета темы Телеграма под наш дизайн
         tg.setHeaderColor('#1b2735'); 
         tg.setBackgroundColor('#1b2735');
 
+        // ФУНКЦИЯ ПОЛУЧЕНИЯ ПАРАМЕТРОВ (Исправлены ключи под твой Python)
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
             return {
                 name: params.get('name'),
-                birth_date: params.get('birth_date'),
-                birth_time: params.get('birth_time'),
+                bdate: params.get('bdate'), // Исправлено с birth_date
+                btime: params.get('btime'), // Исправлено с birth_time
                 city: params.get('city')
             };
         }
@@ -216,13 +211,28 @@
         window.onload = function() {
             const data = getQueryParams();
             
+            // Заполняем имя
             if (data.name) {
                 document.getElementById('name').value = data.name;
                 document.getElementById('main-btn').innerText = "🔄 Обновить Космо-Данные"; 
             }
-            if (data.birth_date) document.getElementById('date').value = data.birth_date;
-            if (data.birth_time) document.getElementById('time').value = data.birth_time;
+            
+            // Заполняем город
             if (data.city) document.getElementById('city').value = data.city;
+
+            // Заполняем время
+            if (data.btime) document.getElementById('time').value = data.btime;
+
+            // ЗАПОЛНЯЕМ ДАТУ (С конвертацией из ДД.ММ.ГГГГ в ГГГГ-ММ-ДД)
+            if (data.bdate) {
+                let dateVal = data.bdate;
+                if (dateVal.includes('.')) {
+                    let parts = dateVal.split('.');
+                    // Пересобираем в формат, который понимает <input type="date">
+                    dateVal = parts[2] + '-' + parts[1] + '-' + parts[0];
+                }
+                document.getElementById('date').value = dateVal;
+            }
         };
 
         function sendData() {
@@ -237,12 +247,11 @@
                 return;
             }
 
-            // Визуальный эффект нажатия
             let btn = document.getElementById("main-btn");
             btn.innerText = "Отправляю в космос... 🚀";
             btn.style.opacity = "0.7";
 
-            let data = {
+            let resultData = {
                 type: "astro_profile_update",
                 name: name,
                 birth_date: date,
@@ -251,8 +260,7 @@
                 daily_notify: notify
             };
 
-            tg.sendData(JSON.stringify(data));
-            // Небольшая задержка для красоты
+            tg.sendData(JSON.stringify(resultData));
             setTimeout(function() { tg.close(); }, 300); 
         }
     </script>

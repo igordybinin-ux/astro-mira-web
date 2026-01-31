@@ -191,78 +191,73 @@
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand(); 
+		let tg = window.Telegram.WebApp;
+		tg.expand(); 
+		tg.setHeaderColor('#1b2735'); 
+		tg.setBackgroundColor('#1b2735');
 
-        tg.setHeaderColor('#1b2735'); 
-        tg.setBackgroundColor('#1b2735');
+		// 1. Функция для чтения параметров из ссылки
+		function getQueryParams() {
+			const params = new URLSearchParams(window.location.search);
+			return {
+				name: params.get('name'),
+				bdate: params.get('bdate'),
+				btime: params.get('btime'),
+				city: params.get('city')
+			};
+		}
 
-        // ФУНКЦИЯ ПОЛУЧЕНИЯ ПАРАМЕТРОВ (Исправлены ключи под твой Python)
-        function getQueryParams() {
-            const params = new URLSearchParams(window.location.search);
-            return {
-                name: params.get('name'),
-                bdate: params.get('bdate'), // Исправлено с birth_date
-                btime: params.get('btime'), // Исправлено с birth_time
-                city: params.get('city')
-            };
-        }
+		// 2. Сразу при загрузке страницы подставляем данные
+		window.addEventListener('DOMContentLoaded', () => {
+			const data = getQueryParams();
+			console.log("Полученные данные:", data); // Можно увидеть в инспекторе браузера
 
-        window.onload = function() {
-            const data = getQueryParams();
-            
-            // Заполняем имя
-            if (data.name) {
-                document.getElementById('name').value = data.name;
-                document.getElementById('main-btn').innerText = "🔄 Обновить Космо-Данные"; 
-            }
-            
-            // Заполняем город
-            if (data.city) document.getElementById('city').value = data.city;
+			if (data.name) {
+				document.getElementById('name').value = data.name;
+				document.getElementById('main-btn').innerText = "🔄 Обновить Космо-Данные"; 
+			}
+			
+			if (data.city) {
+				document.getElementById('city').value = data.city;
+			}
 
-            // Заполняем время
-            if (data.btime) document.getElementById('time').value = data.btime;
+			if (data.btime) {
+				document.getElementById('time').value = data.btime;
+			}
 
-            // ЗАПОЛНЯЕМ ДАТУ (С конвертацией из ДД.ММ.ГГГГ в ГГГГ-ММ-ДД)
-            if (data.bdate) {
-                let dateVal = data.bdate;
-                if (dateVal.includes('.')) {
-                    let parts = dateVal.split('.');
-                    // Пересобираем в формат, который понимает <input type="date">
-                    dateVal = parts[2] + '-' + parts[1] + '-' + parts[0];
-                }
-                document.getElementById('date').value = dateVal;
-            }
-        };
+			// Конвертируем дату 24.05.1990 -> 1990-05-24
+			if (data.bdate && data.bdate.includes('.')) {
+				const parts = data.bdate.split('.');
+				const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+				document.getElementById('date').value = formattedDate;
+			}
+		});
 
-        function sendData() {
-            let name = document.getElementById("name").value.trim();
-            let date = document.getElementById("date").value;
-            let time = document.getElementById("time").value;
-            let city = document.getElementById("city").value.trim();
-            let notify = document.getElementById("notify").checked;
+		function sendData() {
+			let name = document.getElementById("name").value.trim();
+			let date = document.getElementById("date").value;
+			let time = document.getElementById("time").value;
+			let city = document.getElementById("city").value.trim();
+			let notify = document.getElementById("notify").checked;
 
-            if (!name || !date || !city) {
-                tg.showAlert("🪐 Пожалуйста, заполни Имя, Дату и Город, чтобы звезды сошлись!");
-                return;
-            }
+			if (!name || !date || !city) {
+				tg.showAlert("🪐 Пожалуйста, заполни Имя, Дату и Город!");
+				return;
+			}
 
-            let btn = document.getElementById("main-btn");
-            btn.innerText = "Отправляю в космос... 🚀";
-            btn.style.opacity = "0.7";
+			let resultData = {
+				type: "astro_profile_update",
+				name: name,
+				birth_date: date,
+				birth_time: time,
+				city: city,
+				daily_notify: notify
+			};
 
-            let resultData = {
-                type: "astro_profile_update",
-                name: name,
-                birth_date: date,
-                birth_time: time,
-                city: city,
-                daily_notify: notify
-            };
-
-            tg.sendData(JSON.stringify(resultData));
-            setTimeout(function() { tg.close(); }, 300); 
-        }
-    </script>
+			tg.sendData(JSON.stringify(resultData));
+			setTimeout(() => { tg.close(); }, 300); 
+		}
+	</script>
+	
 </body>
 </html>

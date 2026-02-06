@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Настройка Астро-Профиля</title>
+    <title>Astro Profile</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
@@ -19,245 +19,201 @@
 
         body {
             font-family: 'Montserrat', sans-serif;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
             color: var(--text-color);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             overflow-x: hidden;
         }
 
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
-                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
-                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
-            background-size: 550px 550px, 350px 350px, 250px 250px;
-            background-position: 0 0, 40px 60px, 130px 270px;
-            z-index: -1;
-            opacity: 0.6;
-        }
-
         .container {
-            width: 90%;
-            max-width: 400px;
+            width: 90%; max-width: 400px;
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 25px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            animation: fadeIn 0.8s ease-out;
         }
 
         h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            margin-top: 0;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            text-align: center; margin-bottom: 25px; margin-top: 0;
+            font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
             background: linear-gradient(to right, #fff, #a3b1ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(163, 177, 255, 0.3);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-size: 13px;
-            color: #d1d1d1;
-            margin-bottom: 8px;
-            display: block;
-            font-weight: 600;
-            padding-left: 5px;
-        }
+        .form-group { margin-bottom: 15px; }
+        label { font-size: 13px; color: #d1d1d1; margin-bottom: 8px; display: block; font-weight: 600; }
 
         input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid var(--glass-border);
+            width: 100%; padding: 14px;
+            border-radius: 12px; border: 1px solid var(--glass-border);
             background-color: var(--input-bg);
-            color: white;
-            font-size: 16px;
-            font-family: inherit;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-            outline: none;
+            color: white; font-size: 16px; font-family: inherit;
+            outline: none; box-sizing: border-box;
         }
-
-        input:focus {
-            border-color: var(--accent-color);
-            background-color: rgba(0, 0, 0, 0.5);
-            box-shadow: 0 0 15px rgba(163, 177, 255, 0.2);
-        }
+        input:focus { border-color: var(--accent-color); background-color: rgba(0, 0, 0, 0.5); }
 
         .checkbox-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
+            display: flex; align-items: center; gap: 12px;
+            margin-top: 10px; padding: 10px;
+            background: rgba(255,255,255,0.05); border-radius: 12px;
         }
-
-        input[type="checkbox"] {
-            width: 22px;
-            height: 22px;
-            accent-color: #764ba2;
-            cursor: pointer;
-            margin: 0;
-        }
+        input[type="checkbox"] { width: 22px; height: 22px; accent-color: #764ba2; margin: 0; cursor: pointer;}
 
         #main-btn {
             background: var(--primary-gradient);
-            color: white;
-            font-size: 16px;
-            font-weight: 800;
-            padding: 16px;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            margin-top: 25px;
-            width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: white; font-size: 16px; font-weight: 800;
+            padding: 16px; border: none; border-radius: 15px;
+            cursor: pointer; margin-top: 25px; width: 100%;
+            text-transform: uppercase; letter-spacing: 1px;
             box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
-            transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        #main-btn:active {
-            transform: scale(0.98);
-            box-shadow: 0 2px 10px rgba(118, 75, 162, 0.3);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        #main-btn:active { transform: scale(0.98); }
+        
+        /* Календарь белый иконка */
         input[type="date"]::-webkit-calendar-picker-indicator,
-        input[type="time"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-            opacity: 0.6;
-            cursor: pointer;
-        }
+        input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>🌠 Профиль</h2>
+        <h2 id="ui-title">🌠 Профиль</h2>
 
         <div class="form-group">
-            <label>👤 Как к тебе обращаться?</label>
-            <input type="text" id="name" placeholder="Твое имя">
+            <label id="lbl-name">👤 Как к тебе обращаться?</label>
+            <input type="text" id="name" placeholder="Name">
         </div>
 
         <div class="form-group">
-            <label>📅 Дата рождения</label>
+            <label id="lbl-date">📅 Дата рождения</label>
             <input type="date" id="date">
         </div>
 
         <div class="form-group">
-            <label>⏰ Время рождения (важно для домов)</label>
+            <label id="lbl-time">⏰ Время (важно для домов)</label>
             <input type="time" id="time">
         </div>
 
         <div class="form-group">
-            <label>🏙 Город рождения</label>
-            <input type="text" id="city" placeholder="Например: Москва">
+            <label id="lbl-city">🏙 Город рождения</label>
+            <input type="text" id="city" placeholder="City">
         </div>
 
         <div class="checkbox-wrapper">
             <input type="checkbox" id="notify" checked>
-            <label for="notify" style="margin:0; cursor:pointer;">🔔 Получать ежедневный гороскоп</label>
+            <label for="notify" id="lbl-notify" style="margin:0; cursor:pointer;">🔔 Ежедневный гороскоп</label>
         </div>
 
         <button id="main-btn" onclick="sendData()">Сохранить ✨</button>
     </div>
 
     <script>
-		let tg = window.Telegram.WebApp;
-		tg.expand(); 
-		tg.setHeaderColor('#1b2735'); 
-		tg.setBackgroundColor('#1b2735');
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.setHeaderColor('#1b2735'); 
+        tg.setBackgroundColor('#1b2735');
 
-		// 1. Функция для чтения параметров из ссылки
-		function getQueryParams() {
-			const params = new URLSearchParams(window.location.search);
-			return {
-				name: params.get('name'),
-				bdate: params.get('bdate'),
-				btime: params.get('btime'),
-				city: params.get('city')
-			};
-		}
+        // 🔥 СЛОВАРЬ ПЕРЕВОДОВ
+        const TEXTS = {
+            "ru": {
+                title: "🌠 Профиль",
+                name: "👤 Как к тебе обращаться?",
+                date: "📅 Дата рождения",
+                time: "⏰ Время рождения (важно)",
+                city: "🏙 Город рождения",
+                notify: "🔔 Получать гороскоп",
+                btn: "Сохранить ✨",
+                btn_upd: "🔄 Обновить данные",
+                err: "🪐 Заполни все поля!"
+            },
+            "pt": {
+                title: "🌠 Meu Perfil",
+                name: "👤 Como devo te chamar?",
+                date: "📅 Data de Nascimento",
+                time: "⏰ Hora (importante)",
+                city: "🏙 Cidade de Nascimento",
+                notify: "🔔 Horóscopo diário",
+                btn: "Salvar ✨",
+                btn_upd: "🔄 Atualizar Dados",
+                err: "🪐 Preencha todos os campos!"
+            },
+            "es": {
+                title: "🌠 Mi Perfil",
+                name: "👤 ¿Cómo te llamas?",
+                date: "📅 Fecha de Nacimiento",
+                time: "⏰ Hora (importante)",
+                city: "🏙 Ciudad de Nacimiento",
+                notify: "🔔 Horóscopo diario",
+                btn: "Guardar ✨",
+                btn_upd: "🔄 Actualizar Datos",
+                err: "🪐 ¡Rellena todos los campos!"
+            }
+        };
 
-		// 2. Сразу при загрузке страницы подставляем данные
-		window.addEventListener('DOMContentLoaded', () => {
-			const data = getQueryParams();
-			console.log("Полученные данные:", data); // Можно увидеть в инспекторе браузера
+        // 1. Получаем параметры (включая язык)
+        const params = new URLSearchParams(window.location.search);
+        const lang = params.get('lang') || 'ru'; // Если языка нет, будет RU
+        const currentTexts = TEXTS[lang] || TEXTS['ru'];
 
-			if (data.name) {
-				document.getElementById('name').value = data.name;
-				document.getElementById('main-btn').innerText = "🔄 Обновить Космо-Данные"; 
-			}
-			
-			if (data.city) {
-				document.getElementById('city').value = data.city;
-			}
+        // 2. Применяем переводы при загрузке
+        window.addEventListener('DOMContentLoaded', () => {
+            // Тексты UI
+            document.getElementById('ui-title').innerText = currentTexts.title;
+            document.getElementById('lbl-name').innerText = currentTexts.name;
+            document.getElementById('lbl-date').innerText = currentTexts.date;
+            document.getElementById('lbl-time').innerText = currentTexts.time;
+            document.getElementById('lbl-city').innerText = currentTexts.city;
+            document.getElementById('lbl-notify').innerText = currentTexts.notify;
+            document.getElementById('main-btn').innerText = currentTexts.btn;
 
-			if (data.btime) {
-				document.getElementById('time').value = data.btime;
-			}
+            // Заполняем данные (если есть)
+            const p_name = params.get('name');
+            const p_city = params.get('city');
+            const p_btime = params.get('btime');
+            const p_bdate = params.get('bdate');
 
-			// Конвертируем дату 24.05.1990 -> 1990-05-24
-			if (data.bdate && data.bdate.includes('.')) {
-				const parts = data.bdate.split('.');
-				const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
-				document.getElementById('date').value = formattedDate;
-			}
-		});
+            if (p_name && p_name !== 'None') {
+                document.getElementById('name').value = p_name;
+                document.getElementById('main-btn').innerText = currentTexts.btn_upd;
+            }
+            if (p_city && p_city !== 'None') document.getElementById('city').value = p_city;
+            if (p_btime && p_btime !== 'None') document.getElementById('time').value = p_btime;
+            
+            // Конвертация даты
+            if (p_bdate && p_bdate.includes('.')) {
+                const parts = p_bdate.split('.');
+                document.getElementById('date').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+        });
 
-		function sendData() {
-			let name = document.getElementById("name").value.trim();
-			let date = document.getElementById("date").value;
-			let time = document.getElementById("time").value;
-			let city = document.getElementById("city").value.trim();
-			let notify = document.getElementById("notify").checked;
+        function sendData() {
+            let name = document.getElementById("name").value.trim();
+            let date = document.getElementById("date").value;
+            let time = document.getElementById("time").value;
+            let city = document.getElementById("city").value.trim();
+            let notify = document.getElementById("notify").checked;
 
-			if (!name || !date || !city) {
-				tg.showAlert("🪐 Пожалуйста, заполни Имя, Дату и Город!");
-				return;
-			}
+            if (!name || !date || !city) {
+                tg.showAlert(currentTexts.err);
+                return;
+            }
 
-			let resultData = {
-				type: "astro_profile_update",
-				name: name,
-				birth_date: date,
-				birth_time: time,
-				city: city,
-				daily_notify: notify
-			};
+            let resultData = {
+                type: "astro_profile_update",
+                name: name,
+                birth_date: date,
+                birth_time: time,
+                city: city,
+                daily_notify: notify
+            };
 
-			tg.sendData(JSON.stringify(resultData));
-			setTimeout(() => { tg.close(); }, 300); 
-		}
-	</script>
-	
+            tg.sendData(JSON.stringify(resultData));
+            setTimeout(() => { tg.close(); }, 300); 
+        }
+    </script>
 </body>
 </html>

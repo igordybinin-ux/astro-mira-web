@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -14,7 +14,6 @@
             display: flex; flex-direction: column; align-items: center;
             height: 100vh; overflow: hidden; -webkit-tap-highlight-color: transparent;
         }
-        /* --- Стили те же, что и были, скрыл для краткости, они не менялись --- */
         #menu-screen {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             height: 100%; width: 100%; position: absolute; z-index: 10;
@@ -41,27 +40,23 @@
         .tab-btn { background: none; border: none; color: #777; padding: 5px 15px; white-space: nowrap; font-family: 'Cinzel', serif; font-size: 12px; cursor: pointer; transition: 0.3s; }
         .tab-btn.active { color: #ffd700; border-bottom: 2px solid #ffd700; }
         #gallery-grid { flex: 1; width: 100%; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 15px; align-content: start; box-sizing: border-box; }
-        .gallery-item { width: 100%; aspect-ratio: 2/3; border-radius: 6px; overflow: hidden; border: 1px solid #c5a059; background: #111; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5); transition: transform 0.2s; }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s; }
+        .gallery-item { width: 100%; aspect-ratio: 2/3; border-radius: 6px; overflow: hidden; border: 1px solid #c5a059; background: #111; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
         .gallery-item.locked img { filter: grayscale(100%) brightness(25%); }
-        .gallery-item.locked::after { content: "🔒"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 18px; opacity: 0.4; }
         #card-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         #game-screen { display: none; flex-direction: column; align-items: center; width: 100%; height: 100%; padding-top: 5px; }
-        h2 { font-family: 'Cinzel', serif; margin-bottom: 5px; font-weight: 400; color: #ffd700; text-transform: uppercase; letter-spacing: 2px; text-align: center; font-size: 16px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3); height: 25px; }
+        h2 { font-family: 'Cinzel', serif; margin-bottom: 5px; font-weight: 400; color: #ffd700; text-transform: uppercase; letter-spacing: 2px; text-align: center; font-size: 16px; height: 25px; }
         .cards-container { display: flex; justify-content: center; align-items: center; width: 100%; height: 500px; transition: all 0.3s; }
         .cards-container.mode-five, .cards-container.mode-ten { flex-wrap: wrap; align-content: center; }
         .card-wrapper { display: flex; flex-direction: column; align-items: center; margin: 0 4px; perspective: 1000px; }
-        .card { position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); border-radius: 8px; }
+        .card { position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; border-radius: 8px; }
         .mode-single .card { width: 240px; height: 360px; }
         .mode-triple .card { width: 100px; height: 155px; }
         .mode-five .card { width: 85px; height: 130px; }
         .mode-ten .card-wrapper { width: 31%; margin: 2px 1%; }
-        .mode-ten .card { width: 100%; height: 110px; border-radius: 5px; }
-        .mode-ten .card-label { font-size: 8px; margin-top: 2px; height: 10px; max-width: 100%; }
-        @media (max-width: 340px) { .mode-triple .card { width: 85px; height: 130px; } .mode-five .card { width: 70px; height: 110px; } .mode-ten .card { height: 90px; } }
+        .mode-ten .card { width: 100%; height: 110px; }
         .card.is-flipped { transform: rotateY(180deg); }
         .card__face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; overflow: hidden; border: 2px solid #c5a059; box-sizing: border-box; background: #000; }
-        .mode-ten .card__face { border-radius: 5px; border-width: 1px; }
         .card__face--front { transform: rotateY(0deg); }
         .card__face--back { transform: rotateY(180deg); }
         .card-img-content { width: 100%; height: 100%; object-fit: cover; }
@@ -70,7 +65,7 @@
         .info-block.visible { opacity: 1; }
         .card-name-text { font-family: 'Cinzel', serif; color: #ffd700; font-size: 16px; margin-bottom: 2px; }
         .card-desc-text { font-size: 11px; color: #ccc; max-width: 300px; margin: 0 auto; line-height: 1.2; }
-        .action-btn { margin-top: auto; margin-bottom: 20px; padding: 12px 40px; background: linear-gradient(45deg, #c5a059, #ffd700); color: #000; border: none; border-radius: 4px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity 0.5s; text-transform: uppercase; box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); cursor: pointer; }
+        .action-btn { margin-top: auto; margin-bottom: 20px; padding: 12px 40px; background: linear-gradient(45deg, #c5a059, #ffd700); color: #000; border: none; border-radius: 4px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity 0.5s; text-transform: uppercase; cursor: pointer; }
         .action-btn.visible { opacity: 1; pointer-events: all; }
     </style>
 </head>
@@ -97,13 +92,13 @@
             <div class="badge">PRO</div>
         </button>
         
-        <button class="menu-btn" onclick="startGame('ten')" style="border-color: #ff4444; box-shadow: 0 0 10px rgba(255,68,68,0.2);">
+        <button class="menu-btn" onclick="startGame('ten')" style="border-color: #ff4444;">
             <b id="btn-ten-t">Кельтский Крест</b>
             <span id="btn-ten-d">Полный расклад (10 карт)</span>
             <div class="badge badge-sale" id="badge-sale">99₽ PRO</div>
         </button>
 
-        <button class="menu-btn" onclick="openGallery()" style="margin-top: 20px; background: #222; border-color: #777;">
+        <button class="menu-btn" onclick="openGallery()" style="margin-top: 20px; background: #222;">
             <b id="btn-coll-t">Коллекция Карт</b>
             <span id="btn-coll-d">Ваша энциклопедия Таро</span>
         </button>
@@ -145,7 +140,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // 🌍 ПЕРЕВОДЫ ИНТЕРФЕЙСА
         const UI_TEXTS = {
             ru: {
                 menu: "Выберите расклад",
@@ -153,12 +147,12 @@
                 t_t: "Три Судьбы", t_d: "Прошлое / Настоящее / Будущее",
                 f_t: "Подкова", f_d: "Скрытое и Итоги",
                 x_t: "Кельтский Крест", x_d: "Полный расклад (10 карт)",
-                sale: "290₽ | 99₽ PRO",
-                c_t: "Коллекция", c_d: "Ваша энциклопедия",
+                sale: "99₽ PRO",
+                c_t: "Коллекция Карт", c_d: "Ваша энциклопедия Таро",
                 gal: "Коллекция",
                 tabs: ["Старшие", "Жезлы", "Кубки", "Мечи", "Монеты"],
                 touch: "Коснитесь карты", done: "Судьба открыта", send: "Принять Судьбу",
-                locked_t: "Карта скрыта", locked_d: "Эта энергия еще не проявлена. Делай расклады.", close: "Закрыть",
+                locked_t: "Карта скрыта", locked_d: "Эта энергия еще не проявлена. Делай расклады.", close: "Нажмите, чтобы закрыть",
                 pos_3: ["Прошлое", "Настоящее", "Будущее"],
                 pos_5: ["Прошлое", "Настоящее", "Будущее", "Скрытое", "Итог"],
                 pos_10: ["Суть", "Проблема", "Прошлое", "Будущее", "Сознание", "Подсознание", "Совет", "Внешнее", "Страхи", "Итог"]
@@ -169,35 +163,74 @@
                 t_t: "Três Destinos", t_d: "Passado / Presente / Futuro",
                 f_t: "Ferradura", f_d: "Oculto e Resultados",
                 x_t: "Cruz Celta", x_d: "Leitura Completa (10 cartas)",
-                sale: "R$ 15 | PRO",
-                c_t: "Coleção", c_d: "Sua enciclopédia",
+                sale: "Acesso PRO",
+                c_t: "Coleção de Cartas", c_d: "Sua enciclopédia de Tarot",
                 gal: "Coleção",
-                tabs: ["Arcanos Maiores", "Paus", "Copas", "Espadas", "Ouros"],
+                tabs: ["Maiores", "Paus", "Copas", "Espadas", "Ouros"],
                 touch: "Toque na carta", done: "Destino revelado", send: "Aceitar Destino",
-                locked_t: "Carta Bloqueada", locked_d: "Energia ainda não revelada. Jogue mais.", close: "Fechar",
+                locked_t: "Carta oculta", locked_d: "Energia ainda não manifestada. Faça mais leituras.", close: "Toque para fechar",
                 pos_3: ["Passado", "Presente", "Futuro"],
                 pos_5: ["Passado", "Presente", "Futuro", "Oculto", "Resultado"],
-                pos_10: ["Essência", "Problema", "Passado", "Futuro", "Consciente", "Inconsciente", "Conselho", "Externo", "Medos", "Resultado"]
+                pos_10: ["Essência", "Desafio", "Passado", "Futuro", "Consciente", "Inconsciente", "Conselho", "Ambiente", "Esperanças", "Resultado"]
             },
             es: {
-                menu: "Elige Tirada",
-                s_t: "Carta del Día", s_d: "Consejo para hoy",
+                menu: "Elige la Tirada",
+                s_t: "Carta del Día", s_d: "Un consejo para hoy",
                 t_t: "Tres Destinos", t_d: "Pasado / Presente / Futuro",
                 f_t: "Herradura", f_d: "Oculto y Resultados",
                 x_t: "Cruz Celta", x_d: "Lectura Completa (10 cartas)",
-                sale: "$5 USD | PRO",
-                c_t: "Colección", c_d: "Tu enciclopedia",
+                sale: "Acceso PRO",
+                c_t: "Colección de Cartas", c_d: "Tu enciclopedia de Tarot",
                 gal: "Colección",
-                tabs: ["Arcanos Mayores", "Bastos", "Copas", "Espadas", "Oros"],
+                tabs: ["Mayores", "Bastos", "Copas", "Espadas", "Oros"],
                 touch: "Toca la carta", done: "Destino revelado", send: "Aceptar Destino",
-                locked_t: "Carta Bloqueada", locked_d: "Energía no revelada aún. Juega más.", close: "Cerrar",
+                locked_t: "Carta oculta", locked_d: "Energía no manifestada aún. Haz más tiradas.", close: "Toca para cerrar",
                 pos_3: ["Pasado", "Presente", "Futuro"],
                 pos_5: ["Pasado", "Presente", "Futuro", "Oculto", "Resultado"],
-                pos_10: ["Esencia", "Problema", "Pasado", "Futuro", "Consciente", "Inconsciente", "Consejo", "Externo", "Miedos", "Resultado"]
+                pos_10: ["Esencia", "Desafío", "Pasado", "Futuro", "Consciente", "Inconsciente", "Consejo", "Entorno", "Miedos", "Resultado"]
             }
         };
 
-        // 🌌 ДАННЫЕ КАРТ (База - ID и Тип)
+        const CARD_TEXTS = {
+            ru: {
+                fool: ["Шут", "Начало, свобода, риск."], magician: ["Маг", "Воля, мастерство."], priestess: ["Жрица", "Интуиция, тайна."],
+                empress: ["Императрица", "Природа, созидание."], emperor: ["Император", "Власть, порядок."], hierophant: ["Иерофант", "Традиция, вера."],
+                lovers: ["Влюбленные", "Выбор, союз."], chariot: ["Колесница", "Победа, триумф."], strength: ["Сила", "Мягкая сила, контроль."],
+                hermit: ["Отшельник", "Мудрость, поиск."], fortune: ["Колесо Фортуны", "Судьба, шанс."], justice: ["Справедливость", "Закон, истина."],
+                hanged: ["Повешенный", "Пауза, взгляд иначе."], death: ["Смерть", "Трансформация."], temperance: ["Умеренность", "Баланс, мера."],
+                devil: ["Дьявол", "Зависимость, тень."], tower: ["Башня", "Прорыв, крах."], star: ["Звезда", "Надежда, свет."],
+                moon: ["Луна", "Иллюзии, подсознание."], sun: ["Солнце", "Радость, успех."], judgement: ["Суд", "Пробуждение."], world: ["Мир", "Завершение, гармония."],
+                wands: "Жезлов", cups: "Кубков", swords: "Мечей", pentacles: "Монет",
+                ace: "Туз", page: "Паж", knight: "Рыцарь", queen: "Королева", king: "Король"
+            },
+            pt: {
+                fool: ["O Louco", "Início, liberdade, risco."], magician: ["O Mago", "Vontade, maestria."], priestess: ["A Sacerdotisa", "Intuição, mistério."],
+                empress: ["A Imperatriz", "Natureza, criação."], emperor: ["O Imperador", "Poder, ordem."], hierophant: ["O Hierofante", "Tradição, fé."],
+                lovers: ["Os Enamorados", "Escolha, união."], chariot: ["O Carro", "Vitória, triunfo."], strength: ["A Força", "Paciência, força suave."],
+                hermit: ["O Eremita", "Sabedoria, busca interior."], fortune: ["Roda da Fortuna", "Destino, mudança."], justice: ["A Justiça", "Verdade, lei."],
+                hanged: ["O Enforcado", "Pausa, sacrifício."], death: ["A Morte", "Transformação."], temperance: ["A Temperança", "Equilíbrio, cura."],
+                devil: ["O Diabo", "Tentação, sombra."], tower: ["A Torre", "Colapso, libertação."], star: ["A Estrela", "Esperança, luz."],
+                moon: ["A Lua", "Ilusão, subconsciente."], sun: ["O Sol", "Alegria, sucesso."], judgement: ["O Julgamento", "Despertar."], world: ["O Mundo", "Harmonia, conclusão."],
+                wands: "de Paus", cups: "de Copas", swords: "de Espadas", pentacles: "de Ouros",
+                ace: "Ás", page: "Valete", knight: "Cavaleiro", queen: "Rainha", king: "Rei"
+            },
+            es: {
+                fool: ["El Loco", "Inicio, libertad, riesgo."], magician: ["El Mago", "Voluntad, maestría."], priestess: ["La Sacerdotisa", "Intuición, misterio."],
+                empress: ["La Emperatriz", "Naturaleza, creación."], emperor: ["El Emperador", "Poder, orden."], hierophant: ["El Hierofante", "Tradición, fe."],
+                lovers: ["Los Enamorados", "Elección, unión."], chariot: ["El Carro", "Victoria, triunfo."], strength: ["La Fuerza", "Paciencia, autocontrol."],
+                hermit: ["El Ermitaño", "Sabiduría, búsqueda."], fortune: ["Rueda de Fortuna", "Destino, cambio."], justice: ["La Justicia", "Verdad, ley."],
+                hanged: ["El Colgado", "Pausa, sacrificio."], death: ["La Muerte", "Transformación."], temperance: ["La Templanza", "Equilibrio, armonía."],
+                devil: ["El Diablo", "Tentación, sombra."], tower: ["La Torre", "Colapso, liberación."], star: ["La Estrella", "Esperanza, luz."],
+                moon: ["La Luna", "Ilusión, subconsciente."], sun: ["El Sol", "Éxito, alegría."], judgement: ["El Juicio", "Despertar."], world: ["El Mundo", "Armonía, conclusión."],
+                wands: "de Bastos", cups: "de Copas", swords: "de Espadas", pentacles: "de Oros",
+                ace: "As", page: "Sota", knight: "Caballo", queen: "Reina", king: "Rey"
+            }
+        };
+
+        const lang = new URLSearchParams(window.location.search).get('lang') || 'ru';
+        const T = UI_TEXTS[lang] || UI_TEXTS['ru'];
+        const C = CARD_TEXTS[lang] || CARD_TEXTS['ru'];
+        
         const baseDeck = [
             {id: "fool", type: "major"}, {id: "magician", type: "major"}, {id: "priestess", type: "major"},
             {id: "empress", type: "major"}, {id: "emperor", type: "major"}, {id: "hierophant", type: "major"},
@@ -205,78 +238,27 @@
             {id: "hermit", type: "major"}, {id: "fortune", type: "major"}, {id: "justice", type: "major"},
             {id: "hanged", type: "major"}, {id: "death", type: "major"}, {id: "temperance", type: "major"},
             {id: "devil", type: "major"}, {id: "tower", type: "major"}, {id: "star", type: "major"},
-            {id: "moon", type: "major"}, {id: "sun", type: "major"}, {id: "judgement", type: "major"}, {id: "world", type: "major"},
-            // Minor Arcana (simplified generation)
+            {id: "moon", type: "major"}, {id: "sun", type: "major"}, {id: "judgement", type: "major"}, {id: "world", type: "major"}
         ];
-        // Добавляем младшие арканы программно
         const suits = ["wands", "cups", "swords", "pentacles"];
         const ranks = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "page", "knight", "queen", "king"];
         suits.forEach(s => ranks.forEach(r => baseDeck.push({id: `${s}_${r}`, type: s})));
 
-        // 🌌 ПЕРЕВОДЫ КАРТ (RU, PT, ES)
-        const CARD_TEXTS = {
-            ru: {
-                fool: ["Шут", "Начало, свобода, риск."], magician: ["Маг", "Воля, мастерство."], priestess: ["Жрица", "Интуиция, тайна."],
-                empress: ["Императрица", "Плодородие, природа."], emperor: ["Император", "Власть, структура."], hierophant: ["Иерофант", "Традиция, вера."],
-                lovers: ["Влюбленные", "Выбор, союз."], chariot: ["Колесница", "Победа, контроль."], strength: ["Сила", "Терпение, мягкая сила."],
-                hermit: ["Отшельник", "Мудрость, уединение."], fortune: ["Колесо Фортуны", "Удача, перемены."], justice: ["Справедливость", "Правда, закон."],
-                hanged: ["Повешенный", "Жертва, пауза."], death: ["Смерть", "Трансформация."], temperance: ["Умеренность", "Баланс, исцеление."],
-                devil: ["Дьявол", "Искушение, зависимость."], tower: ["Башня", "Крах, очищение."], star: ["Звезда", "Надежда, вдохновение."],
-                moon: ["Луна", "Иллюзии, сны."], sun: ["Солнце", "Успех, радость."], judgement: ["Суд", "Возрождение."], world: ["Мир", "Гармония, финал."],
-                // Generic for minors (RU)
-                wands: "Жезлов", cups: "Кубков", swords: "Мечей", pentacles: "Монет",
-                ace: "Туз", page: "Паж", knight: "Рыцарь", queen: "Королева", king: "Король"
-            },
-            pt: {
-                fool: ["O Louco", "Início, liberdade, risco."], magician: ["O Mago", "Vontade, maestria."], priestess: ["A Sacerdotisa", "Intuição, mistério."],
-                empress: ["A Imperatriz", "Fertilidade, natureza."], emperor: ["O Imperador", "Poder, estrutura."], hierophant: ["O Hierofante", "Tradição, fé."],
-                lovers: ["Os Enamorados", "Escolha, união."], chariot: ["O Carro", "Vitória, controle."], strength: ["A Força", "Paciência, força suave."],
-                hermit: ["O Eremita", "Sabedoria, solidão."], fortune: ["Roda da Fortuna", "Sorte, mudança."], justice: ["A Justiça", "Verdade, lei."],
-                hanged: ["O Enforcado", "Sacrifício, pausa."], death: ["A Morte", "Transformação."], temperance: ["A Temperança", "Equilíbrio, cura."],
-                devil: ["O Diabo", "Tentação, vício."], tower: ["A Torre", "Colapso, purificação."], star: ["A Estrela", "Esperança, inspiração."],
-                moon: ["A Lua", "Ilusão, sonhos."], sun: ["O Sol", "Sucesso, alegria."], judgement: ["O Julgamento", "Renascimento."], world: ["O Mundo", "Harmonia, final."],
-                // Generic PT
-                wands: "de Paus", cups: "de Copas", swords: "de Espadas", pentacles: "de Ouros",
-                ace: "Ás", page: "Valete", knight: "Cavaleiro", queen: "Rainha", king: "Rei"
-            },
-            es: {
-                fool: ["El Loco", "Inicio, libertad."], magician: ["El Mago", "Voluntad, maestría."], priestess: ["La Sacerdotisa", "Intuición, misterio."],
-                empress: ["La Emperatriz", "Fertilidad, naturaleza."], emperor: ["El Emperador", "Poder, estructura."], hierophant: ["El Hierofante", "Tradición, fe."],
-                lovers: ["Los Enamorados", "Elección, unión."], chariot: ["El Carro", "Victoria, control."], strength: ["La Fuerza", "Paciencia, fuerza."],
-                hermit: ["El Ermitaño", "Sabiduría, soledad."], fortune: ["Rueda de Fortuna", "Suerte, cambio."], justice: ["La Justicia", "Verdad, ley."],
-                hanged: ["El Colgado", "Sacrificio, pausa."], death: ["La Muerte", "Transformación."], temperance: ["La Templanza", "Equilibrio, curación."],
-                devil: ["El Diablo", "Tentación, adicción."], tower: ["La Torre", "Colapso, purificación."], star: ["La Estrella", "Esperanza, inspiración."],
-                moon: ["La Luna", "Ilusión, sueños."], sun: ["El Sol", "Éxito, alegría."], judgement: ["El Juicio", "Renacimiento."], world: ["El Mundo", "Armonía, final."],
-                // Generic ES
-                wands: "de Bastos", cups: "de Copas", swords: "de Espadas", pentacles: "de Oros",
-                ace: "As", page: "Sota", knight: "Caballo", queen: "Reina", king: "Rey"
-            }
-        };
-
-        // --- ЛОГИКА ---
-        let lang = new URLSearchParams(window.location.search).get('lang') || 'ru';
-        let T = UI_TEXTS[lang] || UI_TEXTS['ru'];
-        let C = CARD_TEXTS[lang] || CARD_TEXTS['ru'];
-        
-        let tarotDeck = [];
-
-        // Сборка колоды с переводом
-        baseDeck.forEach(c => {
+        let tarotDeck = baseDeck.map(c => {
             let name, desc;
             if (c.type === 'major') {
                 [name, desc] = C[c.id] || [c.id, ""];
             } else {
-                // Генератор для младших (Туз Кубков / Ás de Copas)
                 let [suit, rank] = c.id.split('_');
                 let rankName = C[rank] || rank;
                 let suitName = C[suit] || suit;
-                name = `${rankName} ${suitName}`; // В PT/ES предлоги уже внутри suitName
-                desc = T.locked_d; // Заглушка описания для младших, чтобы не раздувать файл
+                name = (lang === 'ru') ? `${rankName} ${suitName}` : `${rankName} ${suitName}`;
+                desc = T.locked_d;
             }
-            tarotDeck.push({ ...c, name: name, desc: desc });
+            return { ...c, name: name, desc: desc };
         });
 
-        // ПРИМЕНЕНИЕ ТЕКСТОВ UI
+        // ПРИМЕНЕНИЕ UI
         document.getElementById('menu-title').innerText = T.menu;
         document.getElementById('btn-single-t').innerText = T.s_t; document.getElementById('btn-single-d').innerText = T.s_d;
         document.getElementById('btn-triple-t').innerText = T.t_t; document.getElementById('btn-triple-d').innerText = T.t_d;
@@ -288,14 +270,11 @@
         document.getElementById('status-text').innerText = T.touch;
         document.getElementById('sendBtn').innerText = T.send;
         document.getElementById('modal-close').innerText = T.close;
-        
-        // Табы
         ['major', 'wands', 'cups', 'swords', 'pent'].forEach((id, i) => {
-            document.getElementById(`tab-${id}`).innerText = T.tabs[i];
+            const el = document.getElementById(`tab-${id}`);
+            if(el) el.innerText = T.tabs[i];
         });
 
-        // --- ДАЛЕЕ СТАНДАРТНАЯ ЛОГИКА ---
-        
         function unlockCard(cardId) {
             let collection = JSON.parse(localStorage.getItem('mira_collection') || '[]');
             if (!collection.includes(cardId)) {
@@ -305,8 +284,7 @@
         }
 
         function isCardUnlocked(cardId) {
-            let collection = JSON.parse(localStorage.getItem('mira_collection') || '[]');
-            return collection.includes(cardId);
+            return JSON.parse(localStorage.getItem('mira_collection') || '[]').includes(cardId);
         }
 
         function openGallery() {
@@ -318,18 +296,14 @@
 
         function filterGallery(type, event) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            if (event) { event.target.classList.add('active'); } 
-            else { 
-                let sel = type === 'pentacles' ? 'pent' : type; // fix id mismatch
-                let el = document.getElementById(`tab-${sel}`);
+            if (event) event.target.classList.add('active');
+            else {
+                const el = document.getElementById(`tab-${type === 'pentacles' ? 'pent' : type}`);
                 if(el) el.classList.add('active');
             }
-
             const grid = document.getElementById('gallery-grid');
             grid.innerHTML = '';
-
-            const filtered = tarotDeck.filter(c => c.type === type);
-            filtered.forEach(card => {
+            tarotDeck.filter(c => c.type === type).forEach(card => {
                 const unlocked = isCardUnlocked(card.id);
                 const item = document.createElement('div');
                 item.className = 'gallery-item' + (unlocked ? '' : ' locked');
@@ -343,15 +317,12 @@
             const modalImg = document.getElementById('modal-img');
             modalImg.src = `cards/${card.id}.jpg`;
             modalImg.style.filter = unlocked ? 'none' : 'grayscale(100%) brightness(25%)';
-            
             document.getElementById('modal-title').innerText = unlocked ? card.name : T.locked_t;
             document.getElementById('modal-desc').innerText = unlocked ? card.desc : T.locked_d;
             document.getElementById('card-modal').style.display = 'flex';
         }
 
-        let currentMode = 'single';
-        let selectedCards = [];
-        let flippedCount = 0;
+        let currentMode = 'single', selectedCards = [], flippedCount = 0;
 
         function startGame(mode) {
             currentMode = mode;
@@ -365,21 +336,11 @@
 
         function initBoard() {
             const container = document.getElementById('cards-container');
-            container.innerHTML = '';
-            flippedCount = 0;
-            selectedCards = [];
+            container.innerHTML = ''; flippedCount = 0; selectedCards = [];
             const shuffled = [...tarotDeck].sort(() => 0.5 - Math.random());
-            
-            container.className = 'cards-container';
-            container.classList.add(`mode-${currentMode}`);
-
+            container.className = `cards-container mode-${currentMode}`;
             let count = (currentMode === 'single' ? 1 : (currentMode === 'triple' ? 3 : (currentMode === 'five' ? 5 : 10)));
-            
-            // Labels from translations
-            let labels = [];
-            if (currentMode === 'triple') labels = T.pos_3;
-            else if (currentMode === 'five') labels = T.pos_5;
-            else if (currentMode === 'ten') labels = T.pos_10;
+            let labels = (currentMode === 'triple' ? T.pos_3 : (currentMode === 'five' ? T.pos_5 : T.pos_10));
 
             for (let i = 0; i < count; i++) {
                 const cardData = shuffled[i];
@@ -388,7 +349,7 @@
                 wrapper.className = 'card-wrapper';
                 const cardEl = document.createElement('div');
                 cardEl.className = 'card';
-                cardEl.onclick = () => flipCardLogic(cardEl, cardData, i);
+                cardEl.onclick = () => flipCardLogic(cardEl, cardData);
                 cardEl.innerHTML = `
                     <div class="card__face card__face--front"><img src="cards/back.jpg" class="card-img-content"></div>
                     <div class="card__face card__face--back"><img src="cards/${cardData.id}.jpg" class="card-img-content"></div>
@@ -404,21 +365,18 @@
             }
         }
 
-        function flipCardLogic(element, data, index) {
+        function flipCardLogic(element, data) {
             if (element.classList.contains('is-flipped')) return;
             element.classList.add('is-flipped');
             flippedCount++;
-            
             unlockCard(data.id);
-
             if (currentMode === 'single') {
                 document.getElementById('status-text').innerText = T.done;
                 document.getElementById('info-name').innerText = data.name;
                 document.getElementById('info-desc').innerText = data.desc;
                 document.getElementById('info-block').classList.add('visible');
-            } else {
-                const total = selectedCards.length;
-                if (flippedCount === total) document.getElementById('status-text').innerText = T.done;
+            } else if (flippedCount === selectedCards.length) {
+                document.getElementById('status-text').innerText = T.done;
             }
             if (flippedCount === selectedCards.length) {
                 setTimeout(() => { document.getElementById('sendBtn').classList.add('visible'); }, 600);
@@ -428,29 +386,14 @@
         function sendResult() {
             const btn = document.getElementById('sendBtn');
             btn.style.opacity = "0.7";
-            let dataToSend = {};
-            try {
-                if (currentMode === 'single') {
-                    dataToSend = { type: "tarot_result", card_name: selectedCards[0].name, card_id: selectedCards[0].id };
-                } else {
-                    let type = "tarot_spread_" + (currentMode === 'triple' ? "3" : (currentMode === 'five' ? "5" : "10"));
-                    // Labels again for sending
-                    let labels = [];
-                    if (currentMode === 'triple') labels = T.pos_3;
-                    else if (currentMode === 'five') labels = T.pos_5;
-                    else if (currentMode === 'ten') labels = T.pos_10;
-
-                    dataToSend = {
-                        type: type,
-                        cards: selectedCards.map((c, i) => ({ name: c.name, id: c.id, position: labels[i] }))
-                    };
-                }
-                tg.sendData(JSON.stringify(dataToSend));
-                setTimeout(() => { tg.close(); }, 300);
-            } catch (e) {
-                alert("Error: " + e.message);
-                btn.style.opacity = "1";
-            }
+            let labels = (currentMode === 'triple' ? T.pos_3 : (currentMode === 'five' ? T.pos_5 : T.pos_10));
+            let dataToSend = (currentMode === 'single') ? 
+                { type: "tarot_result", card_name: selectedCards[0].name, card_id: selectedCards[0].id } :
+                { type: "tarot_spread_" + (currentMode === 'triple' ? "3" : (currentMode === 'five' ? "5" : "10")), 
+                  cards: selectedCards.map((c, i) => ({ name: c.name, id: c.id, position: labels[i] })) };
+            
+            tg.sendData(JSON.stringify(dataToSend));
+            setTimeout(() => { tg.close(); }, 300);
         }
     </script>
 </body>

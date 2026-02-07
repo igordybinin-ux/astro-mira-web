@@ -21,7 +21,6 @@
             font-family: 'Montserrat', sans-serif;
             margin: 0;
             padding: 0;
-            /* Космический фон */
             background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
             color: var(--text-color);
             min-height: 100vh;
@@ -32,7 +31,6 @@
             overflow-x: hidden;
         }
 
-        /* Добавляем звезды на фон */
         body::before {
             content: "";
             position: absolute;
@@ -106,7 +104,6 @@
             box-shadow: 0 0 15px rgba(163, 177, 255, 0.2);
         }
 
-        /* Стили для чекбокса */
         .checkbox-wrapper {
             display: flex;
             align-items: center;
@@ -147,13 +144,11 @@
             box-shadow: 0 2px 10px rgba(118, 75, 162, 0.3);
         }
 
-        /* Анимация появления */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Скрываем нативные иконки календаря в темной теме (для эстетики) */
         input[type="date"]::-webkit-calendar-picker-indicator,
         input[type="time"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
@@ -165,31 +160,31 @@
 <body>
 
     <div class="container">
-        <h2>🌠 Профиль</h2>
+        <h2 id="txt_header">🌠 Профиль</h2>
 
         <div class="form-group">
-            <label>👤 Как к тебе обращаться?</label>
+            <label id="lbl_name">👤 Как к тебе обращаться?</label>
             <input type="text" id="name" placeholder="Твое имя">
         </div>
 
         <div class="form-group">
-            <label>📅 Дата рождения</label>
+            <label id="lbl_date">📅 Дата рождения</label>
             <input type="date" id="date">
         </div>
 
         <div class="form-group">
-            <label>⏰ Время рождения (важно для домов)</label>
+            <label id="lbl_time">⏰ Время рождения</label>
             <input type="time" id="time" value="12:00">
         </div>
 
         <div class="form-group">
-            <label>🏙 Город рождения</label>
+            <label id="lbl_city">🏙 Город рождения</label>
             <input type="text" id="city" placeholder="Например: Москва">
         </div>
 
         <div class="checkbox-wrapper">
             <input type="checkbox" id="notify" checked>
-            <label for="notify" style="margin:0; cursor:pointer;">🔔 Получать ежедневный гороскоп</label>
+            <label for="notify" id="lbl_notify" style="margin:0; cursor:pointer;">🔔 Ежедневный гороскоп</label>
         </div>
 
         <button id="main-btn" onclick="sendData()">Сохранить ✨</button>
@@ -198,29 +193,86 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand(); 
-
-        // Настраиваем цвета темы Телеграма под наш дизайн
         tg.setHeaderColor('#1b2735'); 
         tg.setBackgroundColor('#1b2735');
 
-        function getQueryParams() {
-            const params = new URLSearchParams(window.location.search);
-            return {
-                name: params.get('name'),
-                birth_date: params.get('bdate'), // Исправил: бот шлет bdate, а не birth_date в URL
-                birth_time: params.get('btime'),
-                city: params.get('city')
-            };
+        // СЛОВАРЬ ПЕРЕВОДОВ
+        const locales = {
+            "ru": {
+                "header": "🌠 Профиль",
+                "lbl_name": "👤 Как к тебе обращаться?",
+                "lbl_date": "📅 Дата рождения",
+                "lbl_time": "⏰ Время рождения",
+                "lbl_city": "🏙 Город рождения",
+                "lbl_notify": "🔔 Ежедневный гороскоп",
+                "btn_save": "Сохранить ✨",
+                "btn_update": "🔄 Обновить Данные",
+                "btn_sending": "Отправляю... 🚀",
+                "ph_name": "Твое имя",
+                "ph_city": "Например: Москва",
+                "alert": "🪐 Пожалуйста, заполни Имя, Дату и Город!"
+            },
+            "pt": {
+                "header": "🌠 Perfil",
+                "lbl_name": "👤 Como devo te chamar?",
+                "lbl_date": "📅 Data de nascimento",
+                "lbl_time": "⏰ Hora de nascimento",
+                "lbl_city": "🏙 Cidade de nascimento",
+                "lbl_notify": "🔔 Horóscopo diário",
+                "btn_save": "Salvar ✨",
+                "btn_update": "🔄 Atualizar Dados",
+                "btn_sending": "Enviando... 🚀",
+                "ph_name": "Seu nome",
+                "ph_city": "Ex: São Paulo",
+                "alert": "🪐 Por favor, preencha Nome, Data e Cidade!"
+            },
+            "es": {
+                "header": "🌠 Perfil",
+                "lbl_name": "👤 ¿Cómo te llamas?",
+                "lbl_date": "📅 Fecha de nacimiento",
+                "lbl_time": "⏰ Hora de nacimiento",
+                "lbl_city": "🏙 Ciudad de nacimiento",
+                "lbl_notify": "🔔 Horóscopo diario",
+                "btn_save": "Guardar ✨",
+                "btn_update": "🔄 Actualizar Datos",
+                "btn_sending": "Enviando... 🚀",
+                "ph_name": "Tu nombre",
+                "ph_city": "Ej: Madrid",
+                "alert": "🪐 ¡Por favor, completa Nombre, Fecha y Ciudad!"
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const lang = params.get('lang') || 'ru';
+        const t = locales[lang] || locales['ru'];
+
+        // ПРИМЕНЯЕМ ЯЗЫК
+        function applyLocale() {
+            document.getElementById('txt_header').innerText = t.header;
+            document.getElementById('lbl_name').innerText = t.lbl_name;
+            document.getElementById('lbl_date').innerText = t.lbl_date;
+            document.getElementById('lbl_time').innerText = t.lbl_time;
+            document.getElementById('lbl_city').innerText = t.lbl_city;
+            document.getElementById('lbl_notify').innerText = t.lbl_notify;
+            document.getElementById('name').placeholder = t.ph_name;
+            document.getElementById('city').placeholder = t.ph_city;
+            document.getElementById('main-btn').innerText = t.btn_save;
         }
 
         window.onload = function() {
-            const data = getQueryParams();
+            applyLocale();
             
-            if (data.name && data.name !== "undefined") {
+            const data = {
+                name: params.get('name'),
+                birth_date: params.get('bdate'),
+                birth_time: params.get('btime'),
+                city: params.get('city')
+            };
+            
+            if (data.name && data.name !== "undefined" && data.name !== "") {
                 document.getElementById('name').value = data.name;
-                document.getElementById('main-btn').innerText = "🔄 Обновить Космо-Данные"; 
+                document.getElementById('main-btn').innerText = t.btn_update; 
             }
-            // Обработка даты из DD.MM.YYYY в YYYY-MM-DD для input date
             if (data.birth_date && data.birth_date !== "undefined") {
                 if(data.birth_date.includes('.')) {
                     let parts = data.birth_date.split('.');
@@ -241,16 +293,15 @@
             let notify = document.getElementById("notify").checked;
 
             if (!name || !date || !city) {
-                tg.showAlert("🪐 Пожалуйста, заполни Имя, Дату и Город, чтобы звезды сошлись!");
+                tg.showAlert(t.alert);
                 return;
             }
 
-            // Визуальный эффект нажатия
             let btn = document.getElementById("main-btn");
-            btn.innerText = "Отправляю в космос... 🚀";
+            btn.innerText = t.btn_sending;
             btn.style.opacity = "0.7";
 
-            let data = {
+            let resData = {
                 type: "astro_profile_update",
                 name: name,
                 birth_date: date,
@@ -259,9 +310,7 @@
                 daily_notify: notify
             };
 
-            tg.sendData(JSON.stringify(data));
-            
-            // Небольшая задержка для красоты и закрываем
+            tg.sendData(JSON.stringify(resData));
             setTimeout(function() { tg.close(); }, 300); 
         }
     </script>

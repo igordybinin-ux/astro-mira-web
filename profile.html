@@ -100,7 +100,6 @@
             appearance: none;
         }
 
-        /* Иконка стрелочки для выпадающего списка */
         select {
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
@@ -119,22 +118,61 @@
             color: white;
         }
 
+        /* --- НОВЫЕ СТИЛИ ДЛЯ ПЕРЕКЛЮЧАТЕЛЯ (TOGGLE) --- */
         .checkbox-wrapper {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 12px;
             margin-top: 10px;
-            padding: 10px;
+            padding: 12px 15px;
             background: rgba(255,255,255,0.05);
             border-radius: 12px;
+            cursor: pointer;
         }
 
-        input[type="checkbox"] {
-            width: 22px;
-            height: 22px;
-            accent-color: #764ba2;
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
             cursor: pointer;
-            margin: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .4s;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        input:checked + .slider {
+            background: var(--primary-gradient);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
         }
 
         #main-btn {
@@ -205,9 +243,12 @@
             <input type="text" id="city" placeholder="Например: Москва">
         </div>
 
-        <div class="checkbox-wrapper">
-            <input type="checkbox" id="notify" checked>
-            <label for="notify" id="lbl_notify" style="margin:0; cursor:pointer;">🔔 Ежедневный гороскоп</label>
+        <div class="checkbox-wrapper" onclick="document.getElementById('notify').click()">
+            <label id="lbl_notify" style="margin:0; cursor:pointer;">🔔 Ежедневный гороскоп</label>
+            <label class="switch">
+                <input type="checkbox" id="notify" checked onclick="event.stopPropagation()">
+                <span class="slider"></span>
+            </label>
         </div>
 
         <button id="main-btn" onclick="sendData()">Сохранить ✨</button>
@@ -240,7 +281,7 @@
             },
             "pt": {
                 "header": "🌠 Perfil",
-                "lbl_name": "👤 Como devo te chamar?",
+                "lbl_name": "👤 Как devo te chamar?",
                 "lbl_gender": "⚧ Seu gênero",
                 "opt_male": "Masculino",
                 "opt_female": "Feminino",
@@ -302,7 +343,8 @@
                 birth_date: params.get('bdate'),
                 birth_time: params.get('btime'),
                 city: params.get('city'),
-                gender: params.get('gender')
+                gender: params.get('gender'),
+                notify: params.get('notify')
             };
             
             if (data.name && data.name !== "undefined" && data.name !== "") {
@@ -311,6 +353,9 @@
             }
             if (data.gender && data.gender !== "undefined") {
                 document.getElementById('gender').value = data.gender;
+            }
+            if (data.notify === '0') {
+                document.getElementById('notify').checked = false;
             }
             if (data.birth_date && data.birth_date !== "undefined") {
                 if(data.birth_date.includes('.')) {

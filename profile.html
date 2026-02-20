@@ -56,6 +56,7 @@
             padding: 25px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             animation: fadeIn 0.8s ease-out;
+            box-sizing: border-box;
         }
 
         h2 {
@@ -84,7 +85,7 @@
             padding-left: 5px;
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 14px;
             border-radius: 12px;
@@ -96,12 +97,26 @@
             transition: all 0.3s ease;
             box-sizing: border-box;
             outline: none;
+            appearance: none;
         }
 
-        input:focus {
+        /* Иконка стрелочки для выпадающего списка */
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 16px;
+        }
+
+        input:focus, select:focus {
             border-color: var(--accent-color);
             background-color: rgba(0, 0, 0, 0.5);
             box-shadow: 0 0 15px rgba(163, 177, 255, 0.2);
+        }
+
+        option {
+            background-color: #1b2735;
+            color: white;
         }
 
         .checkbox-wrapper {
@@ -168,6 +183,14 @@
         </div>
 
         <div class="form-group">
+            <label id="lbl_gender">⚧ Твой пол</label>
+            <select id="gender">
+                <option value="male" id="opt_male">Мужчина</option>
+                <option value="female" id="opt_female">Женщина</option>
+            </select>
+        </div>
+
+        <div class="form-group">
             <label id="lbl_date">📅 Дата рождения</label>
             <input type="date" id="date">
         </div>
@@ -201,6 +224,9 @@
             "ru": {
                 "header": "🌠 Профиль",
                 "lbl_name": "👤 Как к тебе обращаться?",
+                "lbl_gender": "⚧ Твой пол",
+                "opt_male": "Мужчина",
+                "opt_female": "Женщина",
                 "lbl_date": "📅 Дата рождения",
                 "lbl_time": "⏰ Время рождения",
                 "lbl_city": "🏙 Город рождения",
@@ -215,6 +241,9 @@
             "pt": {
                 "header": "🌠 Perfil",
                 "lbl_name": "👤 Como devo te chamar?",
+                "lbl_gender": "⚧ Seu gênero",
+                "opt_male": "Masculino",
+                "opt_female": "Feminino",
                 "lbl_date": "📅 Data de nascimento",
                 "lbl_time": "⏰ Hora de nascimento",
                 "lbl_city": "🏙 Cidade de nascimento",
@@ -229,6 +258,9 @@
             "es": {
                 "header": "🌠 Perfil",
                 "lbl_name": "👤 ¿Cómo te llamas?",
+                "lbl_gender": "⚧ Tu género",
+                "opt_male": "Masculino",
+                "opt_female": "Femenino",
                 "lbl_date": "📅 Fecha de nacimiento",
                 "lbl_time": "⏰ Hora de nacimiento",
                 "lbl_city": "🏙 Ciudad de nacimiento",
@@ -250,6 +282,9 @@
         function applyLocale() {
             document.getElementById('txt_header').innerText = t.header;
             document.getElementById('lbl_name').innerText = t.lbl_name;
+            document.getElementById('lbl_gender').innerText = t.lbl_gender;
+            document.getElementById('opt_male').innerText = t.opt_male;
+            document.getElementById('opt_female').innerText = t.opt_female;
             document.getElementById('lbl_date').innerText = t.lbl_date;
             document.getElementById('lbl_time').innerText = t.lbl_time;
             document.getElementById('lbl_city').innerText = t.lbl_city;
@@ -266,12 +301,16 @@
                 name: params.get('name'),
                 birth_date: params.get('bdate'),
                 birth_time: params.get('btime'),
-                city: params.get('city')
+                city: params.get('city'),
+                gender: params.get('gender')
             };
             
             if (data.name && data.name !== "undefined" && data.name !== "") {
                 document.getElementById('name').value = data.name;
                 document.getElementById('main-btn').innerText = t.btn_update; 
+            }
+            if (data.gender && data.gender !== "undefined") {
+                document.getElementById('gender').value = data.gender;
             }
             if (data.birth_date && data.birth_date !== "undefined") {
                 if(data.birth_date.includes('.')) {
@@ -287,6 +326,7 @@
 
         function sendData() {
             let name = document.getElementById("name").value.trim();
+            let gender = document.getElementById("gender").value;
             let date = document.getElementById("date").value;
             let time = document.getElementById("time").value;
             let city = document.getElementById("city").value.trim();
@@ -304,6 +344,7 @@
             let resData = {
                 type: "astro_profile_update",
                 name: name,
+                gender: gender,
                 birth_date: date,
                 birth_time: time,
                 city: city,
